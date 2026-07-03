@@ -24,7 +24,7 @@ static auto simple_form_change() -> int {
 }
 
 
-TEST_CASE("Simple term chnge", "[simple_term_change]")
+TEST_CASE("Simple term change", "[simple_term_change]")
 {
   REQUIRE(simple_term_change() == 3);
 }

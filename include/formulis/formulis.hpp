@@ -4,7 +4,7 @@
 
 // Helper to combine multiple lambdas, used for "pattern matching."
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-// For C++17 compatability.
+// For C++17 compatibility.
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 template <typename T>
@@ -26,7 +26,7 @@ class term {
         for (const auto& func : m_on_change) {
             func(old_value, m_value);
         }
-        // Propegate changes to parents.
+        // Propagate changes to parents.
         for (auto& parent : m_parents) {
             parent->set_needs_update();
             parent->update();
