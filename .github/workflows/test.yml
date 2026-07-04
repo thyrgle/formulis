@@ -22,7 +22,7 @@ jobs:
       - name: Install/run conan
         run: |
           pipx run conan profile detect --name=default
-          pipx run conan install . --build=missing
+          pipx run conan install . -s build_type=Debug -b missing
 
       - name: Build and test
         run: |
