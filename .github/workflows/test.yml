@@ -1,0 +1,31 @@
+name: Test Code
+on:
+  [push, pull_request]
+jobs:
+  test-project:
+    name: Test Project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      
+      - name: Install Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '4.3.4'
+
+      - name: Install/run conan
+        run: |
+          pipx run conan profile detect --name=default
+          pipx run conan install . --build=missing
+
+      - name: Build and test
+        run: |
+          cmake -S . -B build
+          cmake --build --preset=dev
+          ctest --preset=dev

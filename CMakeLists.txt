@@ -31,9 +31,6 @@ target_include_directories(
 
 target_compile_features(formulis_formulis INTERFACE cxx_std_17)
 
-find_package(fmt REQUIRED)
-target_link_libraries(formulis_formulis INTERFACE fmt::fmt)
-
 # ---- Install rules ----
 
 if(NOT CMAKE_SKIP_INSTALL_RULES)
