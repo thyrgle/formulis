@@ -26,6 +26,6 @@ jobs:
 
       - name: Build and test
         run: |
-          cmake -S . -B build
+          cmake -S . -B build -DBUILD_TESTING=Debug
           cmake --build --preset=dev
           ctest --preset=dev
