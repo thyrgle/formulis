@@ -21,7 +21,7 @@ Formulae update to reflect changes in their terms. Furthermore, we can listen fo
 #include <iostream>
 #include "formulis/formulis.hpp"
 
-auto listen_to_z(int old_val, int new_val)
+auto listen_to_z(int old_val, int new_val) -> void
 {
     std::cout << "z changed from " << old_val << "to " << new_val << endl;
 }
