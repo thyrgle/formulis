@@ -53,10 +53,15 @@ This needs to be only ran once. Then run:
 conan install . -S build_type=Debug -b missing
 ```
 
-This will have `conan` install the third party dependencies ([Catch2](https://github.com/catchorg/Catch2) for testing). Finally, to build everything:
+This will have `conan` install the third party dependencies ([Catch2](https://github.com/catchorg/Catch2) for testing). Set up the "presets" once:
 
 ```bash
 cmake --preset=dev
+```
+
+Finally, to build:
+
+```bash
 cmake --build --preset=dev
 ```
 
