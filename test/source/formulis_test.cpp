@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <utility>
 
 #include "formulis/formulis.hpp"
