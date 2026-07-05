@@ -140,7 +140,8 @@ auto operator+(term<T>& lhs, formula<T>& rhs) -> formula<T>
 }
 
 /**
- * A "stmt" is either a term or formula. (Note: Sister library `forcamla` does *not* make this distinction.)
+ * A "stmt" is either a term or formula. (Note: Sister library `forcamla` does
+ * *not* make this distinction.)
  */
 template<typename T>
 using stmt = std::variant<term<T>*, formula<T>*>;
@@ -156,7 +157,8 @@ struct unary_expr
 };
 
 /**
- * Keep track of a binary operation applied to two (sub-)formula (the lhs and rhs).
+ * Keep track of a binary operation applied to two (sub-)formula (the lhs and
+ * rhs).
  */
 template<typename T>
 struct bin_expr
