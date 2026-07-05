@@ -49,8 +49,15 @@ public:
   {
   }
 
+  /**
+   * Get the current value of the term. (For `formula` use `eval`).
+   */
   auto unwrap() -> T { return m_value; }
 
+  /**
+   * Set the value of a term to the *current* value of a formula.
+   * @param form The formula to be evaluated and set this term to.
+   */
   auto set(formula<T> form) -> void
   {
     T old_value = m_value;
@@ -63,6 +70,10 @@ public:
     change_detected(old_value);
   }
 
+  /**
+   * Set the value of a term to the *current* value of a term.
+   * @param the_term The term to evaluate and set this term to.
+   */
   auto set(term<T> the_term) -> void
   {
     T old_value = m_value;
@@ -75,6 +86,10 @@ public:
     change_detected(old_value);
   }
 
+  /**
+   * Set the value of a term to a specified value (of the appropriate type.
+   * @param value The value to set this term to.
+   */
   auto set(T value) -> void
   {
     T old_value = m_value;
@@ -94,6 +109,9 @@ public:
   friend auto operator+(term<U>& lhs, formula<U>& rhs) -> formula<U>;
 };
 
+/**
+ * Overloading to allow two terms to be added together.
+ */
 template<typename T>
 auto operator+(term<T>& lhs, term<T>& rhs) -> formula<T>
 {
@@ -106,6 +124,9 @@ auto operator+(term<T>& lhs, term<T>& rhs) -> formula<T>
   return form;
 }
 
+/**
+ * Overloading to allow a term and formula to be added together.
+ */
 template<typename T>
 auto operator+(term<T>& lhs, formula<T>& rhs) -> formula<T>
 {
@@ -118,9 +139,15 @@ auto operator+(term<T>& lhs, formula<T>& rhs) -> formula<T>
   return form;
 }
 
+/**
+ * A "stmt" is either a term or formula. (Note: Sister library `forcamla` does *not* make this distinction.)
+ */
 template<typename T>
 using stmt = std::variant<term<T>*, formula<T>*>;
 
+/**
+ * Keep track of a unary operation applied to some inner formula (the "rhs").
+ */
 template<typename T>
 struct unary_expr
 {
@@ -128,6 +155,9 @@ struct unary_expr
   std::function<T(T)> op;
 };
 
+/**
+ * Keep track of a binary operation applied to two (sub-)formula (the lhs and rhs).
+ */
 template<typename T>
 struct bin_expr
 {
@@ -164,8 +194,14 @@ public:
   {
   }
 
+  /**
+   * Indicate the formula's cached value is out of date and an update is needed
+   */
   auto set_needs_update() -> void { m_needs_update = true; }
 
+  /**
+   * Get the current value of the formula.
+   */
   auto eval() -> T
   {
     if (!m_needs_update) {
@@ -201,6 +237,10 @@ public:
         m_expr);
   }
 
+  /**
+   * Update the cached value of the formula and also perform function calls
+   * if the value was changed.
+   */
   auto update() -> void
   {
     T old_val = m_cached_val;
@@ -216,6 +256,12 @@ public:
     }
   }
 
+  /**
+   * Execute a function when the value of this formula changes.
+   * @param func The function to execute. Takes the old and current value of
+   * the formula. (The user is free to do with the old and current values as
+   * they wish.)
+   */
   auto on_change(std::function<void(T, T)> func) -> void
   {
     m_on_change.push_back(func);
