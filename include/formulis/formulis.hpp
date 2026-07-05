@@ -87,10 +87,10 @@ public:
     change_detected(old_value);
   }
 
-  template <typename U>
+  template<typename U>
   friend auto operator+(term<U>& lhs, term<U>& rhs) -> formula<U>;
 
-  template <typename U>
+  template<typename U>
   friend auto operator+(term<U>& lhs, formula<U>& rhs) -> formula<U>;
 };
 
@@ -218,6 +218,6 @@ public:
 
   auto on_change(std::function<void(T, T)> func) -> void
   {
-      m_on_change.push_back(func);
+    m_on_change.push_back(func);
   }
 };
