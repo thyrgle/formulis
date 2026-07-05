@@ -86,6 +86,12 @@ public:
     // Make changes now that change happened.
     change_detected(old_value);
   }
+
+  template <typename U>
+  friend auto operator+(term<U>& lhs, term<U>& rhs) -> formula<U>;
+
+  template <typename U>
+  friend auto operator+(term<U>& lhs, formula<U>& rhs) -> formula<U>;
 };
 
 template<typename T>
@@ -94,16 +100,22 @@ auto operator+(term<T>& lhs, term<T>& rhs) -> formula<T>
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss + rhss; };
   const bin_expr<T> new_expr = {&lhs, &rhs, add};
-  return formula(new_expr);
+  formula form = formula(new_expr);
+  lhs.m_parents.push_back(&form);
+  rhs.m_parents.push_back(&form);
+  return form;
 }
 
 template<typename T>
-auto operator+(const term<T>& lhs, const formula<T>& rhs) -> formula<T>
+auto operator+(term<T>& lhs, formula<T>& rhs) -> formula<T>
 {
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss + rhss; };
   const bin_expr<T> new_expr = {&lhs, &rhs, add};
-  return formula(new_expr);
+  formula form = formula(new_expr);
+  lhs.m_parents.push_back(&form);
+  rhs.m_parents.push_back(&form);
+  return form;
 }
 
 template<typename T>
@@ -131,13 +143,15 @@ class formula
   std::variant<unary_expr<T>, bin_expr<T>> m_expr;
   T m_cached_val;
   std::vector<formula<T>*> m_parents;
-  std::vector<std::function<T(T, T)>> m_on_change;
+  std::vector<std::function<void(T, T)>> m_on_change;
 
 public:
   explicit formula(unary_expr<T> expr)
       : m_needs_update(true)
       , m_expr(expr)
       , m_cached_val(eval())
+      , m_parents({})
+      , m_on_change({})
   {
   }
 
@@ -145,6 +159,8 @@ public:
       : m_needs_update(true)
       , m_expr(expr)
       , m_cached_val(eval())
+      , m_parents({})
+      , m_on_change({})
   {
   }
 
@@ -193,10 +209,15 @@ public:
       for (const auto& func : m_on_change) {
         func(old_val, m_cached_val);
       }
+      m_needs_update = false;
       for (auto& parent : m_parents) {
         parent->update();
       }
     }
-    m_needs_update = false;
+  }
+
+  auto on_change(std::function<void(T, T)> func) -> void
+  {
+      m_on_change.push_back(func);
   }
 };
