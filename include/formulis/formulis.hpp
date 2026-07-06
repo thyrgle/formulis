@@ -26,8 +26,8 @@ class formula;
  * `term` objects store a value that can be changed over time. Importantly,
  * when they change, parent formula are also changed *automatically*. In this
  * context, a "parent" formula simply uses the term. So if `formula z = x + y;`
- * then `x` and `y` are terms that may change and `z` stores the result of adding
- * `x` and `y`.
+ * then `x` and `y` are terms that may change and `z` stores the result of
+ * adding `x` and `y`.
  */
 template<typename T>
 class term
