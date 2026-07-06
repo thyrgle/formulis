@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <utility>
 
@@ -15,23 +16,20 @@ static auto simple_term_change() -> int
 
 static auto simple_form_construct() -> int
 {
-  term x = term(2);
-  term y = term(3);
-  formula z = x + y;
-  return z.eval();
+  std::shared_ptr<term<int>> x = std::make_shared<term<int>>(2);
+  std::shared_ptr<term<int>> y = std::make_shared<term<int>>(3);
+  std::shared_ptr<formula<int>> z = x + y;
+  return z->eval();
 }
 
 static auto simple_form_change() -> int
 {
-  term x = term(2);
-  term y = term(3);
-  formula z = x + y;
-  x.set(3);
-  return z.eval();
+  std::shared_ptr<term<int>> x = std::make_shared<term<int>>(2);
+  std::shared_ptr<term<int>> y = std::make_shared<term<int>>(3);
+  std::shared_ptr<formula<int>> z = x + y;
+  x->set(3);
+  return z->eval();
 }
-
-int old_value = 0;
-int new_value = 0;
 
 static auto listen_z(int old_val, int new_val)
 {
@@ -40,11 +38,11 @@ static auto listen_z(int old_val, int new_val)
 
 static auto simple_on_change() -> void
 {
-  term x = term(2);
-  term y = term(3);
-  formula z = x + y;
-  z.on_change(listen_z);
-  x.set(3);
+  std::shared_ptr<term<int>> x = std::make_shared<term<int>>(2);
+  std::shared_ptr<term<int>> y = std::make_shared<term<int>>(3);
+  std::shared_ptr<formula<int>> z = x + y;
+  z->on_change(listen_z);
+  x->set(3);
 }
 
 TEST_CASE("Simple term change", "[simple_term_change]")

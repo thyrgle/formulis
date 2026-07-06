@@ -1,4 +1,5 @@
 #include <functional>
+#include <memory>
 #include <variant>
 #include <vector>
 
@@ -32,7 +33,7 @@ class formula;
 template<typename T>
 class term
 {
-  std::vector<formula<T>*> m_parents;
+  std::vector<std::shared_ptr<formula<T>>> m_parents;
   std::vector<std::function<void(T, T)>> m_on_change;
   T m_value;
 
@@ -66,10 +67,10 @@ public:
    * Set the value of a term to the *current* value of a formula.
    * @param form The formula to be evaluated and set this term to.
    */
-  auto set(formula<T> form) -> void
+  auto set(std::shared_ptr<formula<T>> form) -> void
   {
     T old_value = m_value;
-    m_value = form.eval();
+    m_value = form->eval();
     // Nothing changed, early exit.
     if (old_value == m_value) {
       return;
@@ -82,10 +83,10 @@ public:
    * Set the value of a term to the *current* value of a term.
    * @param the_term The term to evaluate and set this term to.
    */
-  auto set(term<T> the_term) -> void
+  auto set(std::shared_ptr<term<T>> the_term) -> void
   {
     T old_value = m_value;
-    m_value = the_term.unwrap();
+    m_value = the_term->unwrap();
     // Nothing changed, early exit.
     if (old_value == m_value) {
       return;
@@ -111,24 +112,24 @@ public:
   }
 
   template<typename U>
-  friend auto operator+(term<U>& lhs, term<U>& rhs) -> formula<U>;
+  friend auto operator+(std::shared_ptr<term<U>>& lhs, std::shared_ptr<term<U>>& rhs) -> std::shared_ptr<formula<U>>;
 
   template<typename U>
-  friend auto operator+(term<U>& lhs, formula<U>& rhs) -> formula<U>;
+  friend auto operator+(std::shared_ptr<term<U>>& lhs, std::shared_ptr<formula<U>>& rhs) -> std::shared_ptr<formula<U>>;
 };
 
 /**
  * Overloading to allow two terms to be added together.
  */
 template<typename T>
-auto operator+(term<T>& lhs, term<T>& rhs) -> formula<T>
+auto operator+(std::shared_ptr<term<T>>& lhs, std::shared_ptr<term<T>>& rhs) -> std::shared_ptr<formula<T>>
 {
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss + rhss; };
-  const bin_expr<T> new_expr = {&lhs, &rhs, add};
-  formula form = formula(new_expr);
-  lhs.m_parents.push_back(&form);
-  rhs.m_parents.push_back(&form);
+  const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
   return form;
 }
 
@@ -136,14 +137,14 @@ auto operator+(term<T>& lhs, term<T>& rhs) -> formula<T>
  * Overloading to allow a term and formula to be added together.
  */
 template<typename T>
-auto operator+(term<T>& lhs, formula<T>& rhs) -> formula<T>
+auto operator+(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs) -> std::shared_ptr<formula<T>>
 {
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss + rhss; };
-  const bin_expr<T> new_expr = {&lhs, &rhs, add};
-  formula form = formula(new_expr);
-  lhs.m_parents.push_back(&form);
-  rhs.m_parents.push_back(&form);
+  const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
   return form;
 }
 
@@ -152,7 +153,7 @@ auto operator+(term<T>& lhs, formula<T>& rhs) -> formula<T>
  * *not* make this distinction.)
  */
 template<typename T>
-using stmt = std::variant<term<T>*, formula<T>*>;
+using stmt = std::variant<std::shared_ptr<term<T>>, std::shared_ptr<formula<T>>>;
 
 /**
  * Keep track of a unary operation applied to some inner formula (the "rhs").
@@ -188,7 +189,7 @@ class formula
   bool m_needs_update;
   std::variant<unary_expr<T>, bin_expr<T>> m_expr;
   T m_cached_val;
-  std::vector<formula<T>*> m_parents;
+  std::vector<std::shared_ptr<formula<T>>> m_parents;
   std::vector<std::function<void(T, T)>> m_on_change;
 
 public:
@@ -228,8 +229,8 @@ public:
             [](unary_expr<T> expression) -> T
             {
               auto inner = std::visit(
-                  overloaded {[](term<T>* val) -> T { return val->unwrap(); },
-                              [](formula<T>* ast) -> T
+                  overloaded {[](std::shared_ptr<term<T>> val) -> T { return val->unwrap(); },
+                              [](std::shared_ptr<formula<T>> ast) -> T
                               {
                                 return (ast->m_needs_update
                                             ? ast->eval()
@@ -241,12 +242,12 @@ public:
             [](bin_expr<T> operand) -> T
             {
               auto inner_lhs = std::visit(
-                  overloaded {[](term<T>* val) -> T { return val->unwrap(); },
-                              [](formula<T>* ast) -> T { return ast->eval(); }},
+                  overloaded {[](std::shared_ptr<term<T>> val) -> T { return val->unwrap(); },
+                              [](std::shared_ptr<formula<T>> ast) -> T { return ast->eval(); }},
                   operand.lhs);
               auto inner_rhs = std::visit(
-                  overloaded {[](term<T>* val) -> T { return val->unwrap(); },
-                              [](formula<T>* ast) -> T { return ast->eval(); }},
+                  overloaded {[](std::shared_ptr<term<T>> val) -> T { return val->unwrap(); },
+                              [](std::shared_ptr<formula<T>> ast) -> T { return ast->eval(); }},
                   operand.rhs);
               return operand.op(inner_lhs, inner_rhs);
             }},
