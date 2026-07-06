@@ -1,6 +1,6 @@
 # formulis
 
-## A Brief Introduction
+## What is it?
 
 `formulis` allows you to make event listeners using formulae. What does that mean? First, consider this small example:
 
