@@ -150,7 +150,6 @@ public:
   friend auto operator/(std::shared_ptr<term<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
-
 };
 
 /**
