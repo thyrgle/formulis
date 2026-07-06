@@ -54,7 +54,6 @@ static auto simple_on_change_sub() -> void
   x->set(3);
 }
 
-
 TEST_CASE("Simple term change", "[simple_term_change]")
 {
   REQUIRE(simple_term_change() == 3);
@@ -97,4 +96,3 @@ TEST_CASE("Simple on_change for formula.", "[simple_on_change_sub]")
   std::cout.rdbuf(old_buffer);
   REQUIRE(capture_output.str() == "z changed from 1 to 0");
 }
-
