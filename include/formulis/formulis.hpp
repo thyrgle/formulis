@@ -112,17 +112,22 @@ public:
   }
 
   template<typename U>
-  friend auto operator+(std::shared_ptr<term<U>>& lhs, std::shared_ptr<term<U>>& rhs) -> std::shared_ptr<formula<U>>;
+  friend auto operator+(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<term<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
 
   template<typename U>
-  friend auto operator+(std::shared_ptr<term<U>>& lhs, std::shared_ptr<formula<U>>& rhs) -> std::shared_ptr<formula<U>>;
+  friend auto operator+(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
 };
 
 /**
  * Overloading to allow two terms to be added together.
  */
 template<typename T>
-auto operator+(std::shared_ptr<term<T>>& lhs, std::shared_ptr<term<T>>& rhs) -> std::shared_ptr<formula<T>>
+auto operator+(std::shared_ptr<term<T>>& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
 {
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss + rhss; };
@@ -137,7 +142,8 @@ auto operator+(std::shared_ptr<term<T>>& lhs, std::shared_ptr<term<T>>& rhs) -> 
  * Overloading to allow a term and formula to be added together.
  */
 template<typename T>
-auto operator+(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs) -> std::shared_ptr<formula<T>>
+auto operator+(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
 {
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss + rhss; };
@@ -153,7 +159,8 @@ auto operator+(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs) 
  * *not* make this distinction.)
  */
 template<typename T>
-using stmt = std::variant<std::shared_ptr<term<T>>, std::shared_ptr<formula<T>>>;
+using stmt =
+    std::variant<std::shared_ptr<term<T>>, std::shared_ptr<formula<T>>>;
 
 /**
  * Keep track of a unary operation applied to some inner formula (the "rhs").
@@ -225,32 +232,36 @@ public:
       return m_cached_val;
     }
     return std::visit(
-        overloaded {
-            [](unary_expr<T> expression) -> T
-            {
-              auto inner = std::visit(
-                  overloaded {[](std::shared_ptr<term<T>> val) -> T { return val->unwrap(); },
-                              [](std::shared_ptr<formula<T>> ast) -> T
-                              {
-                                return (ast->m_needs_update
-                                            ? ast->eval()
-                                            : ast->m_cached_val);
-                              }},
-                  expression.rhs);
-              return expression.op(inner);
-            },
-            [](bin_expr<T> operand) -> T
-            {
-              auto inner_lhs = std::visit(
-                  overloaded {[](std::shared_ptr<term<T>> val) -> T { return val->unwrap(); },
-                              [](std::shared_ptr<formula<T>> ast) -> T { return ast->eval(); }},
-                  operand.lhs);
-              auto inner_rhs = std::visit(
-                  overloaded {[](std::shared_ptr<term<T>> val) -> T { return val->unwrap(); },
-                              [](std::shared_ptr<formula<T>> ast) -> T { return ast->eval(); }},
-                  operand.rhs);
-              return operand.op(inner_lhs, inner_rhs);
-            }},
+        overloaded {[](unary_expr<T> expression) -> T
+                    {
+                      auto inner = std::visit(
+                          overloaded {[](std::shared_ptr<term<T>> val) -> T
+                                      { return val->unwrap(); },
+                                      [](std::shared_ptr<formula<T>> ast) -> T
+                                      {
+                                        return (ast->m_needs_update
+                                                    ? ast->eval()
+                                                    : ast->m_cached_val);
+                                      }},
+                          expression.rhs);
+                      return expression.op(inner);
+                    },
+                    [](bin_expr<T> operand) -> T
+                    {
+                      auto inner_lhs = std::visit(
+                          overloaded {[](std::shared_ptr<term<T>> val) -> T
+                                      { return val->unwrap(); },
+                                      [](std::shared_ptr<formula<T>> ast) -> T
+                                      { return ast->eval(); }},
+                          operand.lhs);
+                      auto inner_rhs = std::visit(
+                          overloaded {[](std::shared_ptr<term<T>> val) -> T
+                                      { return val->unwrap(); },
+                                      [](std::shared_ptr<formula<T>> ast) -> T
+                                      { return ast->eval(); }},
+                          operand.rhs);
+                      return operand.op(inner_lhs, inner_rhs);
+                    }},
         m_expr);
   }
 

@@ -1,4 +1,6 @@
-# formulis
+<p align="center">
+  <img src="formulis_logo.svg" alt="formulis">
+</p>
 
 ## What is it?
 
