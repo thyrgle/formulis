@@ -1,5 +1,7 @@
 # formulis
 
+## A Brief Introduction
+
 `formulis` allows you to make event listeners using formulae. What does that mean? First, consider this small example:
 
 ```cpp
@@ -39,7 +41,7 @@ auto main() -> int
 
 This provides powerful ways of organizing the execution flow of programs.
 
-# Building and installing
+## Building and installing
 
 The library was created using modified [cmake-init](https://github.com/friendlyanon/cmake-init) scaffolding for [conan](https://conan.io/) projects. First, ensure that [`cmake`](https://cmake.org/) and [`conan`](https://conan.io/) are installed. Next, ensure a "Conan Profile" is established for your computer with:
 

@@ -21,6 +21,14 @@ struct bin_expr;
 template<typename T>
 class formula;
 
+/**
+ * `term` objects and `formula` objects are two of the fundamental types.
+ * `term` objects store a value that can be changed over time. Importantly,
+ * when they change, parent formula are also changed *automatically*. In this
+ * context, a "parent" formula simply uses the term. So if `formula z = x + y;`
+ * then `x` and `y` are terms that may change and `z` stores the result of adding
+ * `x` and `y`.
+ */
 template<typename T>
 class term
 {
@@ -168,6 +176,12 @@ struct bin_expr
   std::function<T(T, T)> op;
 };
 
+/**
+ * `term` objects and `formula` objects are two of the fundamental types.
+ * `formula` objects are `term` objects combined with operations to represent
+ * a mathematical formula. They always evaluate to the most up-to-date value of
+ * each `term` they use in their expression.
+ */
 template<typename T>
 class formula
 {
