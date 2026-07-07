@@ -368,6 +368,56 @@ public:
   {
     m_on_change.push_back(func);
   }
+
+  template<typename U>
+  friend auto operator+(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator-(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator*(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator/(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator%(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator^(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator&(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator|(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator&&(std::shared_ptr<term<U>>& lhs,
+                         std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator||(std::shared_ptr<term<U>>& lhs,
+                         std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
 };
 
 /**
