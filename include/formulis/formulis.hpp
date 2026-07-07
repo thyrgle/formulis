@@ -67,7 +67,7 @@ public:
    * Set the value of a term to the *current* value of a formula.
    * @param form The formula to be evaluated and set this term to.
    */
-  auto set(std::shared_ptr<formula<T>> form) -> void
+  auto set(formula<T>& form) -> void
   {
     T old_value = m_value;
     m_value = form->eval();
@@ -83,7 +83,7 @@ public:
    * Set the value of a term to the *current* value of a term.
    * @param the_term The term to evaluate and set this term to.
    */
-  auto set(std::shared_ptr<term<T>> the_term) -> void
+  auto set(term<T>& the_term) -> void
   {
     T old_value = m_value;
     m_value = the_term->unwrap();
