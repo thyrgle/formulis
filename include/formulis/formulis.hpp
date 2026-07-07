@@ -61,7 +61,7 @@ public:
   /**
    * Get the current value of the term. (For `formula` use `eval`).
    */
-  auto unwrap() -> T { return m_value; }
+  auto unwrap() const -> T { return m_value; }
 
   /**
    * Set the value of a term to the *current* value of a formula.
@@ -394,7 +394,7 @@ public:
   /**
    * Get the current value of the formula.
    */
-  auto eval() -> T
+  auto eval() const -> T
   {
     if (!m_needs_update) {
       return m_cached_val;
