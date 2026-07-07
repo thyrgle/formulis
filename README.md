@@ -76,3 +76,7 @@ and to test:
 ```bash
 ctest --preset=dev
 ```
+
+## Documentation
+
+Documentation can be found [here.](https://thyrgle.github.io/formulis/)
