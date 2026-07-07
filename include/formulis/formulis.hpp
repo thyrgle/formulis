@@ -64,6 +64,11 @@ public:
   auto unwrap() const -> T { return m_value; }
 
   /**
+   * Dereferencing -> an alias for unwrap.
+   */
+  auto operator*() const -> const T& { return unwrap(); }
+
+  /**
    * Set the value of a term to the *current* value of a formula.
    * @param form The formula to be evaluated and set this term to.
    */
@@ -468,6 +473,11 @@ public:
                     }},
         m_expr);
   }
+
+  /**
+   * Dereferencing -> an alias for eval.
+   */
+  auto operator*() const -> const T& { return eval(); }
 
   /**
    * Update the cached value of the formula and also perform function calls
