@@ -209,24 +209,23 @@ public:
 
   template<typename U>
   friend auto operator&&(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
+                         std::shared_ptr<term<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
   friend auto operator&&(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
+                         std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
   friend auto operator||(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
+                         std::shared_ptr<term<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
   friend auto operator||(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
+                         std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
-
 };
 
 /**
@@ -489,11 +488,9 @@ auto operator|(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs)
  * Bitwise not of a term.
  */
 template<typename T>
-auto operator~(std::shared_ptr<term<T>>& rhs)
-    -> std::shared_ptr<formula<T>>
+auto operator~(std::shared_ptr<term<T>>& rhs) -> std::shared_ptr<formula<T>>
 {
-  auto add = [](const auto& rhss) -> T
-  { return ~rhss; };
+  auto add = [](const auto& rhss) -> T { return ~rhss; };
   const unary_expr<T> new_expr = {rhs, add};
   std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
   rhs->m_parents.push_back(form);
@@ -504,11 +501,9 @@ auto operator~(std::shared_ptr<term<T>>& rhs)
  * Logical not of a term.
  */
 template<typename T>
-auto operator!(std::shared_ptr<term<T>>& rhs)
-    -> std::shared_ptr<formula<T>>
+auto operator!(std::shared_ptr<term<T>>& rhs) -> std::shared_ptr<formula<T>>
 {
-  auto add = [](const auto& rhss) -> T
-  { return !rhss; };
+  auto add = [](const auto& rhss) -> T { return !rhss; };
   const unary_expr<T> new_expr = {rhs, add};
   std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
   rhs->m_parents.push_back(form);
