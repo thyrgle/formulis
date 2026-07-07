@@ -420,6 +420,10 @@ public:
   }
 
   template<typename U>
+  friend auto operator+(U& lhs, std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
   friend auto operator+(std::shared_ptr<term<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
@@ -432,6 +436,10 @@ public:
   template<typename U>
   friend auto operator+(std::shared_ptr<formula<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator-(U& lhs, std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
@@ -450,6 +458,10 @@ public:
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
+  friend auto operator*(U& lhs, std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
   friend auto operator*(std::shared_ptr<term<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
@@ -462,6 +474,10 @@ public:
   template<typename U>
   friend auto operator*(std::shared_ptr<formula<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator/(U& lhs, std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
@@ -480,6 +496,10 @@ public:
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
+  friend auto operator%(U& lhs, std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
   friend auto operator%(std::shared_ptr<term<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
@@ -492,6 +512,10 @@ public:
   template<typename U>
   friend auto operator%(std::shared_ptr<formula<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator^(U& lhs, std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
@@ -510,6 +534,10 @@ public:
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
+  friend auto operator&(U& lhs, std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
   friend auto operator&(std::shared_ptr<term<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
@@ -522,6 +550,10 @@ public:
   template<typename U>
   friend auto operator&(std::shared_ptr<formula<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator|(U& lhs, std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
@@ -540,6 +572,10 @@ public:
       -> std::shared_ptr<formula<U>>;
 
   template<typename U>
+  friend auto operator&&(U& lhs, std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<bool>>;
+
+  template<typename U>
   friend auto operator&&(std::shared_ptr<term<U>>& lhs,
                          std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<bool>>;
@@ -552,6 +588,10 @@ public:
   template<typename U>
   friend auto operator&&(std::shared_ptr<formula<U>>& lhs,
                          std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<bool>>;
+
+  template<typename U>
+  friend auto operator||(U& lhs, std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<bool>>;
 
   template<typename U>
@@ -569,6 +609,22 @@ public:
                          std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<bool>>;
 };
+
+/**
+ * Addition of value and formula.
+ */
+template<typename T>
+auto operator+(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss + rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
 
 /**
  * Addition of two terms.
@@ -628,6 +684,22 @@ auto operator+(std::shared_ptr<formula<T>>& lhs,
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss + rhss; };
   const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
+ * Subtraction of value and formula.
+ */
+template<typename T>
+auto operator-(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss - rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
   std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
   lhs->m_parents.push_back(form);
   rhs->m_parents.push_back(form);
@@ -699,6 +771,22 @@ auto operator-(std::shared_ptr<formula<T>>& lhs,
 }
 
 /**
+ * Multiplication of value and formula.
+ */
+template<typename T>
+auto operator*(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss * rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
  * Multiplication of two terms together.
  */
 template<typename T>
@@ -756,6 +844,22 @@ auto operator*(std::shared_ptr<formula<T>>& lhs,
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss * rhss; };
   const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
+ * Division of value by formula.
+ */
+template<typename T>
+auto operator/(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss / rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
   std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
   lhs->m_parents.push_back(form);
   rhs->m_parents.push_back(form);
@@ -827,6 +931,22 @@ auto operator/(std::shared_ptr<formula<T>>& lhs,
 }
 
 /**
+ * Modulo of value by formula.
+ */
+template<typename T>
+auto operator%(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss + rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
  * Modulo of two terms.
  */
 template<typename T>
@@ -884,6 +1004,22 @@ auto operator%(std::shared_ptr<formula<T>>& lhs,
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss % rhss; };
   const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
+ * Bitwise xor of value by formula.
+ */
+template<typename T>
+auto operator^(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss ^ rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
   std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
   lhs->m_parents.push_back(form);
   rhs->m_parents.push_back(form);
@@ -955,6 +1091,22 @@ auto operator^(std::shared_ptr<formula<T>>& lhs,
 }
 
 /**
+ * Bitwise and of value and formula.
+ */
+template<typename T>
+auto operator&(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss & rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
  * Bitwise and of two terms.
  */
 template<typename T>
@@ -1012,6 +1164,22 @@ auto operator&(std::shared_ptr<formula<T>>& lhs,
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss & rhss; };
   const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
+ * Bitwise or of value and formula.
+ */
+template<typename T>
+auto operator|(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss | rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
   std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
   lhs->m_parents.push_back(form);
   rhs->m_parents.push_back(form);
@@ -1136,6 +1304,22 @@ auto operator!(std::shared_ptr<formula<T>>& rhs)
 }
 
 /**
+ * Logical or of value and formula.
+ */
+template<typename T>
+auto operator||(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<bool>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss || rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
  * Logical or of two terms.
  */
 template<typename T>
@@ -1194,6 +1378,22 @@ auto operator||(std::shared_ptr<formula<T>>& lhs,
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss || rhss; };
   const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
+ * Logical and of value and formula.
+ */
+template<typename T>
+auto operator&&(T& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<bool>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss || rhss; };
+  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, add};
   std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
   lhs->m_parents.push_back(form);
   rhs->m_parents.push_back(form);
