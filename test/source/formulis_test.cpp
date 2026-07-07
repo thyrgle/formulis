@@ -16,17 +16,17 @@ static auto simple_term_change() -> int
 
 static auto simple_form_construct() -> int
 {
-  std::shared_ptr<term<int>> x = std::make_shared<term<int>>(2);
-  std::shared_ptr<term<int>> y = std::make_shared<term<int>>(3);
-  std::shared_ptr<formula<int>> z = x + y;
+  auto x = std::make_shared<term<int>>(2);
+  auto y = std::make_shared<term<int>>(3);
+  auto z = x + y;
   return z->eval();
 }
 
 static auto simple_form_change() -> int
 {
-  std::shared_ptr<term<int>> x = std::make_shared<term<int>>(2);
-  std::shared_ptr<term<int>> y = std::make_shared<term<int>>(3);
-  std::shared_ptr<formula<int>> z = x + y;
+  auto x = std::make_shared<term<int>>(2);
+  auto y = std::make_shared<term<int>>(3);
+  auto z = x + y;
   x->set(3);
   return z->eval();
 }
@@ -38,18 +38,18 @@ static auto listen_z(int old_val, int new_val)
 
 static auto simple_on_change() -> void
 {
-  std::shared_ptr<term<int>> x = std::make_shared<term<int>>(2);
-  std::shared_ptr<term<int>> y = std::make_shared<term<int>>(3);
-  std::shared_ptr<formula<int>> z = x + y;
+  auto x = std::make_shared<term<int>>(2);
+  auto y = std::make_shared<term<int>>(3);
+  auto z = x + y;
   z->on_change(listen_z);
   x->set(3);
 }
 
 static auto simple_on_change_sub() -> void
 {
-  std::shared_ptr<term<int>> x = std::make_shared<term<int>>(4);
-  std::shared_ptr<term<int>> y = std::make_shared<term<int>>(3);
-  std::shared_ptr<formula<int>> z = x - y;
+  auto x = std::make_shared<term<int>>(4);
+  auto y = std::make_shared<term<int>>(3);
+  auto z = x - y;
   z->on_change(listen_z);
   x->set(3);
 }
