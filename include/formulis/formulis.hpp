@@ -150,6 +150,17 @@ public:
   friend auto operator/(std::shared_ptr<term<U>>& lhs,
                         std::shared_ptr<formula<U>>& rhs)
       -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator%(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<term<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
+  template<typename U>
+  friend auto operator%(std::shared_ptr<term<U>>& lhs,
+                        std::shared_ptr<formula<U>>& rhs)
+      -> std::shared_ptr<formula<U>>;
+
 };
 
 /**
@@ -249,7 +260,7 @@ auto operator*(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs)
 }
 
 /**
- * Overloading to allow two terms to multiply.
+ * Overloading to allow two terms to divide. (lhs / rhs).
  */
 template<typename T>
 auto operator/(std::shared_ptr<term<T>>& lhs, std::shared_ptr<term<T>>& rhs)
@@ -265,7 +276,7 @@ auto operator/(std::shared_ptr<term<T>>& lhs, std::shared_ptr<term<T>>& rhs)
 }
 
 /**
- * Overloading to allow a term and formula to be multiplied together.
+ * Overloading to allow a term and formula to be divided by the other.
  */
 template<typename T>
 auto operator/(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs)
@@ -273,6 +284,38 @@ auto operator/(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs)
 {
   auto add = [](const auto& lhss, const auto& rhss) -> T
   { return lhss / rhss; };
+  const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
+ * Take modulo of lhs by rhs.
+ */
+template<typename T>
+auto operator%(std::shared_ptr<term<T>>& lhs, std::shared_ptr<term<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss % rhss; };
+  const bin_expr<T> new_expr = {lhs, rhs, add};
+  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
+  lhs->m_parents.push_back(form);
+  rhs->m_parents.push_back(form);
+  return form;
+}
+
+/**
+ * Overloading to allow a term and formula to be modulo each other.
+ */
+template<typename T>
+auto operator%(std::shared_ptr<term<T>>& lhs, std::shared_ptr<formula<T>>& rhs)
+    -> std::shared_ptr<formula<T>>
+{
+  auto add = [](const auto& lhss, const auto& rhss) -> T
+  { return lhss % rhss; };
   const bin_expr<T> new_expr = {lhs, rhs, add};
   std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
   lhs->m_parents.push_back(form);
