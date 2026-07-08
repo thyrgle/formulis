@@ -226,8 +226,9 @@ public:
 };
 
 /**
- * A "stmt" is either a term or formula. (Note: Sister library `forcamla` does
- * *not* make this distinction.)
+ * A "stmt" is either a term or formula. Used extensively in `eval` to determine
+ * how to evaluate an expression. (Note: Sister library `forcamla` does *not*
+ * make this distinction.)
  */
 template<typename T>
 using stmt =
@@ -239,7 +240,9 @@ using stmt =
 template<typename T>
 struct unary_expr
 {
+  /** The operand. For instance, in the expression `!x`, `x` is `rhs`. */
   stmt<T> rhs;
+  /** The operator. For instance, in the expression `!x`, `!` is `op`. */
   std::function<T(T)> op;
 };
 
@@ -250,8 +253,13 @@ struct unary_expr
 template<typename T>
 struct bin_expr
 {
+  /** The "left hand" operand. For instance, in the expression `x + y`, `x` is
+   * `lhs`. */
   stmt<T> lhs;
+  /** The "right hand" operand. For instance, in the expression `x + y`, `y` is
+   * `rhs`. */
   stmt<T> rhs;
+  /** The operator. For instance, in the expression `x + y`, `+` is `op`. */
   std::function<T(T, T)> op;
 };
 
