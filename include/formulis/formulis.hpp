@@ -17,14 +17,28 @@ overloaded(Ts...) -> overloaded<Ts...>;
   template<typename U> \
   friend auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<U>>;
 
+#define BEFRIEND_BIN_BOOL(name, t1, t2) \
+  template<typename U> \
+  friend auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<bool>>;
+
 #define BEFRIEND_UNARY(name, t1) \
   template<typename U> \
   friend auto operator~(t1& rhs)->std::shared_ptr<formula<U>>;
 
+#define BEFRIEND_UNARY_BOOL(name, t1) \
+  template<typename U> \
+  friend auto operator~(t1& rhs)->std::shared_ptr<formula<bool>>;
+
 #define TERM_BEFRIEND_UNARY_OP(op) BEFRIEND_UNARY(op, std::shared_ptr<term<U>>)
+
+#define TERM_BEFRIEND_UNARY_OP_BOOL(op) \
+  BEFRIEND_UNARY_BOOL(op, std::shared_ptr<term<U>>)
 
 #define FORMULA_BEFRIEND_UNARY_OP(op) \
   BEFRIEND_UNARY(op, std::shared_ptr<formula<U>>)
+
+#define FORMULA_BEFRIEND_UNARY_OP_BOOL(op) \
+  BEFRIEND_UNARY_BOOL(op, std::shared_ptr<formula<U>>)
 
 #define TERM_BEFRIEND_BIN_OP(op) \
   BEFRIEND_BIN(op, U, std::shared_ptr<term<U>>) \
@@ -33,6 +47,13 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND_BIN(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
   BEFRIEND_BIN(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>)
 
+#define TERM_BEFRIEND_BIN_OP_BOOL(op) \
+  BEFRIEND_BIN_BOOL(op, U, std::shared_ptr<term<U>>) \
+  BEFRIEND_BIN_BOOL(op, std::shared_ptr<term<U>>, U) \
+  BEFRIEND_BIN_BOOL(op, std::shared_ptr<term<U>>, std::shared_ptr<term<U>>) \
+  BEFRIEND_BIN_BOOL(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
+  BEFRIEND_BIN_BOOL(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>)
+
 #define FORMULA_BEFRIEND_BIN_OP(op) \
   BEFRIEND_BIN(op, U, std::shared_ptr<formula<U>>) \
   BEFRIEND_BIN(op, std::shared_ptr<formula<U>>, U) \
@@ -40,11 +61,31 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND_BIN(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>) \
   BEFRIEND_BIN(op, std::shared_ptr<formula<U>>, std::shared_ptr<formula<U>>)
 
+#define FORMULA_BEFRIEND_BIN_OP_BOOL(op) \
+  BEFRIEND_BIN_BOOL(op, U, std::shared_ptr<formula<U>>) \
+  BEFRIEND_BIN_BOOL(op, std::shared_ptr<formula<U>>, U) \
+  BEFRIEND_BIN_BOOL(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
+  BEFRIEND_BIN_BOOL(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>) \
+  BEFRIEND_BIN_BOOL(op, std::shared_ptr<formula<U>>, std::shared_ptr<formula<U>>)
+
 #define REGISTER_OVERLOAD_VAL_LEFT(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<T>> \
   { \
     auto comb = [](const auto& lhss, const auto& rhss) -> T \
+    { return lhss name rhss; }; \
+    const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, comb}; \
+    std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
+    lhs->m_parents.push_back(form); \
+    rhs->m_parents.push_back(form); \
+    return form; \
+  }
+
+#define REGISTER_OVERLOAD_VAL_LEFT_BOOL(name, t1, t2) \
+  template<typename T> \
+  auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<bool>> \
+  { \
+    auto comb = [](const auto& lhss, const auto& rhss) -> bool \
     { return lhss name rhss; }; \
     const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, comb}; \
     std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
@@ -66,6 +107,19 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return form; \
   }
 
+#define REGISTER_OVERLOAD_VAL_RIGHT_BOOL(name, t1, t2) \
+  template<typename T> \
+  auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<bool>> \
+  { \
+    auto comb = [](const auto& lhss, const auto& rhss) -> bool \
+    { return lhss name rhss; }; \
+    const bin_expr<T> new_expr = {lhs, std::make_shared<term<T>>(rhs), comb}; \
+    std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
+    lhs->m_parents.push_back(form); \
+    rhs->m_parents.push_back(form); \
+    return form; \
+  }
+
 #define REGISTER_BIN_OVERLOAD(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<T>> \
@@ -78,6 +132,20 @@ overloaded(Ts...) -> overloaded<Ts...>;
     rhs->m_parents.push_back(form); \
     return form; \
   }
+
+#define REGISTER_BIN_OVERLOAD_BOOL(name, t1, t2) \
+  template<typename T> \
+  auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<bool>> \
+  { \
+    auto comb = [](const auto& lhss, const auto& rhss) -> bool \
+    { return lhss name rhss; }; \
+    const bin_expr<T> new_expr = {lhs, rhs, comb}; \
+    std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
+    lhs->m_parents.push_back(form); \
+    rhs->m_parents.push_back(form); \
+    return form; \
+  }
+
 
 #define REGISTER_BIN_OP(op) \
   REGISTER_OVERLOAD_VAL_LEFT(op, T, std::shared_ptr<term<T>>) \
@@ -92,6 +160,19 @@ overloaded(Ts...) -> overloaded<Ts...>;
   REGISTER_BIN_OVERLOAD( \
       op, std::shared_ptr<formula<T>>, std::shared_ptr<formula<T>>)
 
+#define REGISTER_BIN_OP_BOOL(op) \
+  REGISTER_OVERLOAD_VAL_LEFT_BOOL(op, T, std::shared_ptr<term<T>>) \
+  REGISTER_BIN_OVERLOAD_BOOL( \
+      op, std::shared_ptr<term<T>>, std::shared_ptr<term<T>>) \
+  REGISTER_BIN_OVERLOAD_BOOL( \
+      op, std::shared_ptr<term<T>>, std::shared_ptr<formula<T>>) \
+  REGISTER_BIN_OVERLOAD_BOOL( \
+      op, std::shared_ptr<formula<T>>, std::shared_ptr<term<T>>) \
+  REGISTER_OVERLOAD_VAL_RIGHT_BOOL(op, T, std::shared_ptr<formula<T>>) \
+  REGISTER_BIN_OVERLOAD_BOOL(op, std::shared_ptr<formula<T>>, T) \
+  REGISTER_BIN_OVERLOAD_BOOL( \
+      op, std::shared_ptr<formula<T>>, std::shared_ptr<formula<T>>)
+
 #define REGISTER_UNARY_OVERLOAD(name, t1) \
   template<typename T> \
   auto operator name(t1& rhs)->std::shared_ptr<formula<T>> \
@@ -103,9 +184,25 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return form; \
   }
 
+#define REGISTER_UNARY_OVERLOAD_BOOL(name, t1) \
+  template<typename T> \
+  auto operator name(t1& rhs)->std::shared_ptr<formula<bool>> \
+  { \
+    auto comb = [](const auto& rhss) -> bool { return name rhss; }; \
+    const unary_expr<T> new_expr = {rhs, comb}; \
+    std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
+    rhs->m_parents.push_back(form); \
+    return form; \
+  }
+
 #define REGISTER_UNARY_OP(op) \
   REGISTER_UNARY_OVERLOAD(op, std::shared_ptr<term<T>>) \
   REGISTER_UNARY_OVERLOAD(op, std::shared_ptr<formula<T>>)
+
+#define REGISTER_UNARY_OP_BOOL(op) \
+  REGISTER_UNARY_OVERLOAD_BOOL(op, std::shared_ptr<term<T>>) \
+  REGISTER_UNARY_OVERLOAD_BOOL(op, std::shared_ptr<formula<T>>)
+
 
 template<typename T>
 struct unary_expr;
@@ -218,11 +315,11 @@ public:
   TERM_BEFRIEND_BIN_OP(^)
   TERM_BEFRIEND_BIN_OP(&)
   TERM_BEFRIEND_BIN_OP(|)
-  TERM_BEFRIEND_BIN_OP(&&)
-  TERM_BEFRIEND_BIN_OP(||)
+  TERM_BEFRIEND_BIN_OP_BOOL(&&)
+  TERM_BEFRIEND_BIN_OP_BOOL(||)
 
-  TERM_BEFRIEND_UNARY_OP(~)
-  TERM_BEFRIEND_UNARY_OP(!)
+  TERM_BEFRIEND_UNARY_OP_BOOL(~)
+  TERM_BEFRIEND_UNARY_OP_BOOL(!)
 };
 
 /**
@@ -387,11 +484,11 @@ public:
   FORMULA_BEFRIEND_BIN_OP(^)
   FORMULA_BEFRIEND_BIN_OP(&)
   FORMULA_BEFRIEND_BIN_OP(|)
-  FORMULA_BEFRIEND_BIN_OP(&&)
-  FORMULA_BEFRIEND_BIN_OP(||)
+  FORMULA_BEFRIEND_BIN_OP_BOOL(&&)
+  FORMULA_BEFRIEND_BIN_OP_BOOL(||)
 
-  FORMULA_BEFRIEND_UNARY_OP(~)
-  FORMULA_BEFRIEND_UNARY_OP(!)
+  FORMULA_BEFRIEND_UNARY_OP_BOOL(~)
+  FORMULA_BEFRIEND_UNARY_OP_BOOL(!)
 };
 
 REGISTER_BIN_OP(+)
@@ -402,8 +499,8 @@ REGISTER_BIN_OP(%)
 REGISTER_BIN_OP(^)
 REGISTER_BIN_OP(&)
 REGISTER_BIN_OP(|)
-REGISTER_BIN_OP(&&)
-REGISTER_BIN_OP(||)
+REGISTER_BIN_OP_BOOL(&&)
+REGISTER_BIN_OP_BOOL(||)
 
-REGISTER_UNARY_OP(~)
-REGISTER_UNARY_OP(!)
+REGISTER_UNARY_OP_BOOL(~)
+REGISTER_UNARY_OP_BOOL(!)
