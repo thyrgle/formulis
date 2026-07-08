@@ -41,4 +41,4 @@ auto main() -> int
 }
 ```
 
-This provides powerful ways of organizing the execution flow of programs. Interested in using the library? Checkout the next section [Using the Library](\ref md_using].
+This provides powerful ways of organizing the execution flow of programs. Interested in using the library? Checkout the next section [Using the Library](\ref md_using).
