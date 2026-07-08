@@ -32,47 +32,43 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND(op, std::shared_ptr<formula<U>>, std::shared_ptr<formula<U>>)
 
 #define REGISTER_OVERLOAD_VAL_LEFT(name, t1, t2) \
-template<typename T> \
-auto operator name(t1& lhs, t2& rhs) \
-    -> std::shared_ptr<formula<T>> \
-{ \
-  auto comb = [](const auto& lhss, const auto& rhss) -> T \
-  { return lhss name rhss; }; \
-  const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, comb}; \
-  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
-  lhs->m_parents.push_back(form); \
-  rhs->m_parents.push_back(form); \
-  return form; \
-}
+  template<typename T> \
+  auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<T>> \
+  { \
+    auto comb = [](const auto& lhss, const auto& rhss) -> T \
+    { return lhss name rhss; }; \
+    const bin_expr<T> new_expr = {std::make_shared<term<T>>(lhs), rhs, comb}; \
+    std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
+    lhs->m_parents.push_back(form); \
+    rhs->m_parents.push_back(form); \
+    return form; \
+  }
 
 #define REGISTER_OVERLOAD_VAL_RIGHT(name, t1, t2) \
-template<typename T> \
-auto operator name(t1& lhs, t2& rhs) \
-    -> std::shared_ptr<formula<T>> \
-{ \
-  auto comb = [](const auto& lhss, const auto& rhss) -> T \
-  { return lhss name rhss; }; \
-  const bin_expr<T> new_expr = {lhs, std::make_shared<term<T>>(rhs), comb}; \
-  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
-  lhs->m_parents.push_back(form); \
-  rhs->m_parents.push_back(form); \
-  return form; \
-}
+  template<typename T> \
+  auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<T>> \
+  { \
+    auto comb = [](const auto& lhss, const auto& rhss) -> T \
+    { return lhss name rhss; }; \
+    const bin_expr<T> new_expr = {lhs, std::make_shared<term<T>>(rhs), comb}; \
+    std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
+    lhs->m_parents.push_back(form); \
+    rhs->m_parents.push_back(form); \
+    return form; \
+  }
 
 #define REGISTER_OVERLOAD(name, t1, t2) \
-template<typename T> \
-auto operator name(t1& lhs, t2& rhs) \
-    -> std::shared_ptr<formula<T>> \
-{ \
-  auto comb = [](const auto& lhss, const auto& rhss) -> T \
-  { return lhss name rhss; }; \
-  const bin_expr<T> new_expr = {lhs, rhs, comb}; \
-  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
-  lhs->m_parents.push_back(form); \
-  rhs->m_parents.push_back(form); \
-  return form; \
-}
-
+  template<typename T> \
+  auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<T>> \
+  { \
+    auto comb = [](const auto& lhss, const auto& rhss) -> T \
+    { return lhss name rhss; }; \
+    const bin_expr<T> new_expr = {lhs, rhs, comb}; \
+    std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
+    lhs->m_parents.push_back(form); \
+    rhs->m_parents.push_back(form); \
+    return form; \
+  }
 
 #define REGISTER_BIN_OP(op) \
   REGISTER_OVERLOAD_VAL_LEFT(op, T, std::shared_ptr<term<T>>) \
@@ -81,7 +77,23 @@ auto operator name(t1& lhs, t2& rhs) \
   REGISTER_OVERLOAD(op, std::shared_ptr<formula<T>>, std::shared_ptr<term<T>>) \
   REGISTER_OVERLOAD_VAL_RIGHT(op, T, std::shared_ptr<formula<T>>) \
   REGISTER_OVERLOAD(op, std::shared_ptr<formula<T>>, T) \
-  REGISTER_OVERLOAD(op, std::shared_ptr<formula<T>>, std::shared_ptr<formula<T>>)
+  REGISTER_OVERLOAD( \
+      op, std::shared_ptr<formula<T>>, std::shared_ptr<formula<T>>)
+
+#define REGISTER_UNARY_OVERLOAD(name, t1) \
+  template<typename T> \
+  auto operator name(t1& rhs)->std::shared_ptr<formula<T>> \
+  { \
+    auto comb = [](const auto& rhss) -> T { return name rhss; }; \
+    const unary_expr<T> new_expr = {rhs, comb}; \
+    std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr); \
+    rhs->m_parents.push_back(form); \
+    return form; \
+  }
+
+#define REGISTER_UNARY_OP(op) \
+  REGISTER_UNARY_OVERLOAD(op, std::shared_ptr<term<T>>) \
+  REGISTER_UNARY_OVERLOAD(op, std::shared_ptr<formula<T>>)
 
 template<typename T>
 struct unary_expr;
@@ -383,55 +395,5 @@ REGISTER_BIN_OP(|)
 REGISTER_BIN_OP(&&)
 REGISTER_BIN_OP(||)
 
-/**
- * Bitwise not of a term.
- */
-template<typename T>
-auto operator~(std::shared_ptr<term<T>>& rhs) -> std::shared_ptr<formula<T>>
-{
-  auto add = [](const auto& rhss) -> T { return ~rhss; };
-  const unary_expr<T> new_expr = {rhs, add};
-  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
-  rhs->m_parents.push_back(form);
-  return form;
-}
-
-/**
- * Bitwise not of a formula.
- */
-template<typename T>
-auto operator~(std::shared_ptr<formula<T>>& rhs) -> std::shared_ptr<formula<T>>
-{
-  auto add = [](const auto& rhss) -> T { return ~rhss; };
-  const unary_expr<T> new_expr = {rhs, add};
-  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
-  rhs->m_parents.push_back(form);
-  return form;
-}
-
-/**
- * Logical not of a term.
- */
-template<typename T>
-auto operator!(std::shared_ptr<term<T>>& rhs) -> std::shared_ptr<formula<bool>>
-{
-  auto add = [](const auto& rhss) -> T { return !rhss; };
-  const unary_expr<T> new_expr = {rhs, add};
-  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
-  rhs->m_parents.push_back(form);
-  return form;
-}
-
-/**
- * Logical not of a formula.
- */
-template<typename T>
-auto operator!(std::shared_ptr<formula<T>>& rhs)
-    -> std::shared_ptr<formula<bool>>
-{
-  auto add = [](const auto& rhss) -> T { return !rhss; };
-  const unary_expr<T> new_expr = {rhs, add};
-  std::shared_ptr<formula<T>> form = std::make_shared<formula<T>>(new_expr);
-  rhs->m_parents.push_back(form);
-  return form;
-}
+REGISTER_UNARY_OP(~)
+REGISTER_UNARY_OP(!)
