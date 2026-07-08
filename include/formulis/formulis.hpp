@@ -13,23 +13,23 @@ struct overloaded : Ts...
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
-#define BEFRIEND(name, t1, t2) \
+#define BEFRIEND_BIN(name, t1, t2) \
   template<typename U> \
   friend auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<U>>;
 
 #define TERM_BEFRIEND_BIN_OP(op) \
-  BEFRIEND(op, U, std::shared_ptr<term<U>>) \
-  BEFRIEND(op, std::shared_ptr<term<U>>, U) \
-  BEFRIEND(op, std::shared_ptr<term<U>>, std::shared_ptr<term<U>>) \
-  BEFRIEND(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
-  BEFRIEND(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>)
+  BEFRIEND_BIN(op, U, std::shared_ptr<term<U>>) \
+  BEFRIEND_BIN(op, std::shared_ptr<term<U>>, U) \
+  BEFRIEND_BIN(op, std::shared_ptr<term<U>>, std::shared_ptr<term<U>>) \
+  BEFRIEND_BIN(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
+  BEFRIEND_BIN(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>)
 
 #define FORMULA_BEFRIEND_BIN_OP(op) \
-  BEFRIEND(op, U, std::shared_ptr<formula<U>>) \
-  BEFRIEND(op, std::shared_ptr<formula<U>>, U) \
-  BEFRIEND(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
-  BEFRIEND(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>) \
-  BEFRIEND(op, std::shared_ptr<formula<U>>, std::shared_ptr<formula<U>>)
+  BEFRIEND_BIN(op, U, std::shared_ptr<formula<U>>) \
+  BEFRIEND_BIN(op, std::shared_ptr<formula<U>>, U) \
+  BEFRIEND_BIN(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
+  BEFRIEND_BIN(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>) \
+  BEFRIEND_BIN(op, std::shared_ptr<formula<U>>, std::shared_ptr<formula<U>>)
 
 #define REGISTER_OVERLOAD_VAL_LEFT(name, t1, t2) \
   template<typename T> \
