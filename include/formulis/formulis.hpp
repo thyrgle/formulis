@@ -13,6 +13,24 @@ struct overloaded : Ts...
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
+#define BEFRIEND(name, t1, t2) \
+  template<typename U> \
+  friend auto operator name (t1& lhs, t2& rhs) \
+      -> std::shared_ptr<formula<U>>;
+
+#define TERM_BEFRIEND_BIN_OP(op) BEFRIEND(op, U, std::shared_ptr<term<U>>) \
+  BEFRIEND(op, std::shared_ptr<term<U>>, std::shared_ptr<term<U>>) \
+  BEFRIEND(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
+  BEFRIEND(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>)
+
+#define FORMULA_BEFRIEND_BIN_OP(op) BEFRIEND(op, U, std::shared_ptr<formula<U>>) \
+  BEFRIEND(op, std::shared_ptr<formula<U>>, U) \
+  BEFRIEND(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
+  BEFRIEND(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>) \
+  BEFRIEND(op, std::shared_ptr<formula<U>>, std::shared_ptr<formula<U>>)
+
+
+
 template<typename T>
 struct unary_expr;
 
@@ -116,189 +134,17 @@ public:
     change_detected(old_value);
   }
 
-  template<typename U>
-  friend auto operator+(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
+  TERM_BEFRIEND_BIN_OP(+)
+  TERM_BEFRIEND_BIN_OP(-)
+  TERM_BEFRIEND_BIN_OP(*)
+  TERM_BEFRIEND_BIN_OP(/)
+  TERM_BEFRIEND_BIN_OP(%)
+  TERM_BEFRIEND_BIN_OP(^)
+  TERM_BEFRIEND_BIN_OP(&)
+  TERM_BEFRIEND_BIN_OP(|)
+  TERM_BEFRIEND_BIN_OP(&&)
+  TERM_BEFRIEND_BIN_OP(||)
 
-  template<typename U>
-  friend auto operator+(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator+(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator+(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator+(std::shared_ptr<formula<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator-(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator-(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator-(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator-(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator-(std::shared_ptr<formula<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator*(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator*(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator*(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator*(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator*(std::shared_ptr<formula<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator/(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator/(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator/(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator/(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator/(std::shared_ptr<formula<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator%(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator%(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator%(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator%(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator%(std::shared_ptr<formula<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator^(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator^(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator^(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator^(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator^(std::shared_ptr<formula<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator&(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator&(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator&(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator&(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator&(std::shared_ptr<formula<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator|(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator|(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator|(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator|(std::shared_ptr<term<U>>& lhs,
-                        std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator|(std::shared_ptr<formula<U>>& lhs,
-                        std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
 
   template<typename U>
   friend auto operator~(std::shared_ptr<term<U>>& rhs)
@@ -314,52 +160,6 @@ public:
 
   template<typename U>
   friend auto operator!(std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<bool>>;
-
-  template<typename U>
-  friend auto operator&&(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator&&(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<bool>>;
-
-  template<typename U>
-  friend auto operator&&(std::shared_ptr<term<U>>& lhs,
-                         std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<bool>>;
-
-  template<typename U>
-  friend auto operator&&(std::shared_ptr<term<U>>& lhs,
-                         std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<bool>>;
-
-  template<typename U>
-  friend auto operator&&(std::shared_ptr<formula<U>>& lhs,
-                         std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<bool>>;
-
-  template<typename U>
-  friend auto operator||(U& lhs, std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator||(std::shared_ptr<term<U>>& lhs, U& rhs)
-      -> std::shared_ptr<formula<bool>>;
-
-  template<typename U>
-  friend auto operator||(std::shared_ptr<term<U>>& lhs,
-                         std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<bool>>;
-
-  template<typename U>
-  friend auto operator||(std::shared_ptr<term<U>>& lhs,
-                         std::shared_ptr<formula<U>>& rhs)
-      -> std::shared_ptr<formula<bool>>;
-
-  template<typename U>
-  friend auto operator||(std::shared_ptr<formula<U>>& lhs,
-                         std::shared_ptr<term<U>>& rhs)
       -> std::shared_ptr<formula<bool>>;
 };
 
