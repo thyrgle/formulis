@@ -17,6 +17,15 @@ overloaded(Ts...) -> overloaded<Ts...>;
   template<typename U> \
   friend auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<U>>;
 
+#define BEFRIEND_UNARY(name, t1) \
+  template<typename U> \
+  friend auto operator~(t1& rhs)->std::shared_ptr<formula<U>>;
+
+#define TERM_BEFRIEND_UNARY_OP(op) BEFRIEND_UNARY(op, std::shared_ptr<term<U>>)
+
+#define FORMULA_BEFRIEND_UNARY_OP(op) \
+  BEFRIEND_UNARY(op, std::shared_ptr<formula<U>>)
+
 #define TERM_BEFRIEND_BIN_OP(op) \
   BEFRIEND_BIN(op, U, std::shared_ptr<term<U>>) \
   BEFRIEND_BIN(op, std::shared_ptr<term<U>>, U) \
@@ -212,21 +221,8 @@ public:
   TERM_BEFRIEND_BIN_OP(&&)
   TERM_BEFRIEND_BIN_OP(||)
 
-  template<typename U>
-  friend auto operator~(std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator~(std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator!(std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<U>>;
-
-  template<typename U>
-  friend auto operator!(std::shared_ptr<term<U>>& rhs)
-      -> std::shared_ptr<formula<bool>>;
+  TERM_BEFRIEND_UNARY_OP(~)
+  TERM_BEFRIEND_UNARY_OP(!)
 };
 
 /**
@@ -385,6 +381,9 @@ public:
   FORMULA_BEFRIEND_BIN_OP(|)
   FORMULA_BEFRIEND_BIN_OP(&&)
   FORMULA_BEFRIEND_BIN_OP(||)
+
+  FORMULA_BEFRIEND_UNARY_OP(~)
+  FORMULA_BEFRIEND_UNARY_OP(!)
 };
 
 REGISTER_BIN_OP(+)
