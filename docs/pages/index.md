@@ -5,6 +5,7 @@
 `formulis` allows you to make event listeners using formulae. What does that mean? First, consider this small example:
 
 ```cpp
+#include <iostream>
 #include <memory>
 #include "formulis/formulis.hpp"
 
@@ -13,8 +14,9 @@ auto main() -> int
   auto x = std::make_shared<term<int>>(3); // Not actually an int, but a term that holds an int value.
   auto y = std::make_shared<term<int>>(5); // Same as above.
   auto z = x + y; // z = x + y -> 3 + 5 = 8.
+  std::cout << *z; // Dereferencing gets the value "8" from z.
   x->set(4); // Change the value of the term x.
-  // z = x + y -> 4 + 5 = 9 now. Everything is updated automatically.
+  std::cout << *z; // z = x + y -> 4 + 5 = "9" now. Everything is updated automatically.
 }
 ```
 
