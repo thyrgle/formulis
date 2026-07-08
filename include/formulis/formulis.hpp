@@ -66,7 +66,8 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND_BIN_BOOL(op, std::shared_ptr<formula<U>>, U) \
   BEFRIEND_BIN_BOOL(op, std::shared_ptr<term<U>>, std::shared_ptr<formula<U>>) \
   BEFRIEND_BIN_BOOL(op, std::shared_ptr<formula<U>>, std::shared_ptr<term<U>>) \
-  BEFRIEND_BIN_BOOL(op, std::shared_ptr<formula<U>>, std::shared_ptr<formula<U>>)
+  BEFRIEND_BIN_BOOL( \
+      op, std::shared_ptr<formula<U>>, std::shared_ptr<formula<U>>)
 
 #define REGISTER_OVERLOAD_VAL_LEFT(name, t1, t2) \
   template<typename T> \
@@ -146,7 +147,6 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return form; \
   }
 
-
 #define REGISTER_BIN_OP(op) \
   REGISTER_OVERLOAD_VAL_LEFT(op, T, std::shared_ptr<term<T>>) \
   REGISTER_BIN_OVERLOAD( \
@@ -202,7 +202,6 @@ overloaded(Ts...) -> overloaded<Ts...>;
 #define REGISTER_UNARY_OP_BOOL(op) \
   REGISTER_UNARY_OVERLOAD_BOOL(op, std::shared_ptr<term<T>>) \
   REGISTER_UNARY_OVERLOAD_BOOL(op, std::shared_ptr<formula<T>>)
-
 
 template<typename T>
 struct unary_expr;
