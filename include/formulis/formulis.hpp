@@ -57,7 +57,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return form; \
   }
 
-#define REGISTER_OVERLOAD(name, t1, t2) \
+#define REGISTER_BIN_OVERLOAD(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->std::shared_ptr<formula<T>> \
   { \
@@ -72,12 +72,12 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 #define REGISTER_BIN_OP(op) \
   REGISTER_OVERLOAD_VAL_LEFT(op, T, std::shared_ptr<term<T>>) \
-  REGISTER_OVERLOAD(op, std::shared_ptr<term<T>>, std::shared_ptr<term<T>>) \
-  REGISTER_OVERLOAD(op, std::shared_ptr<term<T>>, std::shared_ptr<formula<T>>) \
-  REGISTER_OVERLOAD(op, std::shared_ptr<formula<T>>, std::shared_ptr<term<T>>) \
+  REGISTER_BIN_OVERLOAD(op, std::shared_ptr<term<T>>, std::shared_ptr<term<T>>) \
+  REGISTER_BIN_OVERLOAD(op, std::shared_ptr<term<T>>, std::shared_ptr<formula<T>>) \
+  REGISTER_BIN_OVERLOAD(op, std::shared_ptr<formula<T>>, std::shared_ptr<term<T>>) \
   REGISTER_OVERLOAD_VAL_RIGHT(op, T, std::shared_ptr<formula<T>>) \
-  REGISTER_OVERLOAD(op, std::shared_ptr<formula<T>>, T) \
-  REGISTER_OVERLOAD( \
+  REGISTER_BIN_OVERLOAD(op, std::shared_ptr<formula<T>>, T) \
+  REGISTER_BIN_OVERLOAD( \
       op, std::shared_ptr<formula<T>>, std::shared_ptr<formula<T>>)
 
 #define REGISTER_UNARY_OVERLOAD(name, t1) \
