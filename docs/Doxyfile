@@ -7,13 +7,13 @@ PROJECT_NAME = "formulis"
 PROJECT_NUMBER = "0.1.0"
 
 # Add sources
-INPUT = "README.md" "include/formulis/formulis.hpp" "docs/pages/about.dox"
+INPUT = "docs/pages/index.md" "include/formulis/formulis.hpp" "docs/pages/using.md" "docs/pages/tests.md"
 EXTRACT_ALL = YES
 RECURSIVE = YES
 OUTPUT_DIRECTORY = "docs"
 
 # Use the README as a main page
-USE_MDFILE_AS_MAINPAGE = "README.md"
+USE_MDFILE_AS_MAINPAGE = "docs/pages/index.md"
 
 # set relative include paths
 FULL_PATH_NAMES = YES
