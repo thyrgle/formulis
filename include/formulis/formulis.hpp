@@ -72,9 +72,12 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 #define REGISTER_BIN_OP(op) \
   REGISTER_OVERLOAD_VAL_LEFT(op, T, std::shared_ptr<term<T>>) \
-  REGISTER_BIN_OVERLOAD(op, std::shared_ptr<term<T>>, std::shared_ptr<term<T>>) \
-  REGISTER_BIN_OVERLOAD(op, std::shared_ptr<term<T>>, std::shared_ptr<formula<T>>) \
-  REGISTER_BIN_OVERLOAD(op, std::shared_ptr<formula<T>>, std::shared_ptr<term<T>>) \
+  REGISTER_BIN_OVERLOAD( \
+      op, std::shared_ptr<term<T>>, std::shared_ptr<term<T>>) \
+  REGISTER_BIN_OVERLOAD( \
+      op, std::shared_ptr<term<T>>, std::shared_ptr<formula<T>>) \
+  REGISTER_BIN_OVERLOAD( \
+      op, std::shared_ptr<formula<T>>, std::shared_ptr<term<T>>) \
   REGISTER_OVERLOAD_VAL_RIGHT(op, T, std::shared_ptr<formula<T>>) \
   REGISTER_BIN_OVERLOAD(op, std::shared_ptr<formula<T>>, T) \
   REGISTER_BIN_OVERLOAD( \
