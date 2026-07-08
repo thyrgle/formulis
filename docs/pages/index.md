@@ -1,4 +1,6 @@
-## What is it?
+# What is it?
+
+## Reactive Programming Made Simple
 
 `formulis` allows you to make event listeners using formulae. What does that mean? First, consider this small example:
 
@@ -39,4 +41,4 @@ auto main() -> int
 }
 ```
 
-This provides powerful ways of organizing the execution flow of programs.
+This provides powerful ways of organizing the execution flow of programs. Interested in using the library? Checkout the next section [Using the Library](\ref md_using].
