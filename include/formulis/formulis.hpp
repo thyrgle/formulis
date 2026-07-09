@@ -3,15 +3,16 @@
 #include <variant>
 #include <vector>
 
-/**
- * Helper to combine multiple lambdas, used for "pattern matching."
- */
+// See below for docs on this.
 template<class... Ts>
 struct overloaded : Ts...
 {
   using Ts::operator()...;
 };
 // For C++17 compatibility.
+/**
+ * Helper to combine multiple lambdas, used for "pattern matching."
+ */
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
