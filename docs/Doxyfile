@@ -8,8 +8,7 @@ PROJECT_NUMBER = "0.1.0"
 
 # Add sources
 INPUT = "docs/pages/index.md" "include/formulis/formulis.hpp" "docs/pages/using.md" "docs/pages/tests.md"
-EXTRACT_ALL = YES
-RECURSIVE = YES
+EXCLUDE_PATTERNS += *.md
 OUTPUT_DIRECTORY = "docs"
 
 # Use the README as a main page
