@@ -7,7 +7,7 @@ PROJECT_NAME = "formulis"
 PROJECT_NUMBER = "0.1.0"
 
 # Add sources
-INPUT = "docs/pages/index.md" "include/formulis/formulis.hpp" "docs/pages/using.md" "docs/pages/tests.md"
+INPUT = "docs/pages/index.md" "include/formulis/formulis.hpp" "docs/pages/using.md" "docs/pages/tests.md" "docs/pages/internals.md"
 EXCLUDE_PATTERNS += *.md
 OUTPUT_DIRECTORY = "docs"
 
