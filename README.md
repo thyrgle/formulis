@@ -12,11 +12,11 @@
 
 auto main() -> int
 {
-  auto x = std::make_shared<term<int>>(3); // Not actually an int, but a term that holds an int value.
-  auto y = std::make_shared<term<int>>(5); // Same as above.
+  auto x = term<int>(3); // Not actually an int, but a term that holds an int value.
+  auto y = term<int>(5); // Same as above.
   auto z = x + y; // z = x + y -> 3 + 5 = 8.
   x->set(4); // Change the value of the term x.
-  // z = x + y -> 4 + 5 = 9 now. Everything is updated automatically.
+  // z = x + y -> 4 + 5 = 9 now. Everything is updated automatically.[
 }
 ```
 
@@ -34,8 +34,8 @@ auto listen_to_z(int old_val, int new_val) -> void
 
 auto main() -> int
 {
-  auto x = std::make_shared<term<int>>(3);
-  auto y = std::make_shared<term<int>>(5);
+  auto x = term<int>(3);
+  auto y = term<int>(5);
   auto z = x + y; // z = x + y -> 3 + 5 = 8.
   z->on_change(listen_to_z); 
   x->set(4); // Change the value of the term x.
