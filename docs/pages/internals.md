@@ -1,4 +1,4 @@
-# A High level overview
+# Internals: A High Level Overview
 
 ## The Structure
 
