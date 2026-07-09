@@ -4,6 +4,9 @@
 #include <vector>
 
 // See below for docs on this.
+/**
+ * Helper to combine multiple lambdas, used for "pattern matching."
+ */
 template<class... Ts>
 struct overloaded : Ts...
 {
