@@ -1,98 +1,49 @@
 #include <iostream>
-#include <memory>
-#include <sstream>
-#include <utility>
 
 #include "formulis/formulis.hpp"
 
 #include <catch2/catch_test_macros.hpp>
-
-static auto simple_term_change() -> int
-{
-  term test = term(2);
-  test.set(3);
-  return test.unwrap();
-}
-
-static auto simple_form_construct() -> int
-{
-  auto x = std::make_shared<term<int>>(2);
-  auto y = std::make_shared<term<int>>(3);
-  auto z = x + y;
-  return z->eval();
-}
-
-static auto simple_form_change() -> int
-{
-  auto x = std::make_shared<term<int>>(2);
-  auto y = std::make_shared<term<int>>(3);
-  auto z = x + y;
-  x->set(3);
-  return z->eval();
-}
 
 static auto listen_z(int old_val, int new_val)
 {
   std::cout << "z changed from " << old_val << " to " << new_val;
 }
 
-static auto simple_on_change() -> void
+TEST_CASE("simple terms and formulas", "[simple]")
 {
-  auto x = std::make_shared<term<int>>(2);
-  auto y = std::make_shared<term<int>>(3);
+  auto x = term<int>(2);
+  SECTION("change from 2 to 3")
+  {
+    REQUIRE(x.unwrap() == 2);
+    x.set(3);
+    REQUIRE(x.unwrap() == 3);
+  }
+  auto y = term<int>(2);
   auto z = x + y;
-  z->on_change(listen_z);
-  x->set(3);
+  SECTION("basic formula")
+  {
+    REQUIRE(z.eval() == 4);
+    x.set(3);
+    REQUIRE(z.eval() == 5);
+    y.set(3);
+    REQUIRE(z.eval() == 6);
+  }
 }
 
-static auto simple_on_change_sub() -> void
+TEST_CASE("3 term formulas", "[simple]")
 {
-  auto x = std::make_shared<term<int>>(4);
-  auto y = std::make_shared<term<int>>(3);
-  auto z = x - y;
-  z->on_change(listen_z);
-  x->set(3);
-}
-
-TEST_CASE("Simple term change", "[simple_term_change]")
-{
-  REQUIRE(simple_term_change() == 3);
-}
-
-TEST_CASE("Simple formula construct", "[simple_form_construct]")
-{
-  REQUIRE(simple_form_construct() == 5);
-}
-
-TEST_CASE("Simple formula change", "[simple_form_change]")
-{
-  REQUIRE(simple_form_change() == 6);
-}
-
-TEST_CASE("Simple on_change for formula.", "[simple_on_change]")
-{
-  simple_on_change();
-  std::streambuf* old_buffer = std::cout.rdbuf();
-
-  std::stringstream capture_output;
-  std::cout.rdbuf(capture_output.rdbuf());
-
-  simple_on_change();
-
-  std::cout.rdbuf(old_buffer);
-  REQUIRE(capture_output.str() == "z changed from 5 to 6");
-}
-
-TEST_CASE("Simple on_change for formula.", "[simple_on_change_sub]")
-{
-  simple_on_change();
-  std::streambuf* old_buffer = std::cout.rdbuf();
-
-  std::stringstream capture_output;
-  std::cout.rdbuf(capture_output.rdbuf());
-
-  simple_on_change_sub();
-
-  std::cout.rdbuf(old_buffer);
-  REQUIRE(capture_output.str() == "z changed from 1 to 0");
+  auto x = term<int>(2);
+  auto y = term<int>(2);
+  auto z = term<int>(2);
+  auto w = x + y + z;
+  SECTION("test formula creation and updating")
+  {
+    REQUIRE(w.eval() == 6);
+    x.set(3);
+    REQUIRE(w.eval() == 7);
+    y.set(3);
+    REQUIRE(w.eval() == 8);
+    z.set(3);
+    REQUIRE(w.eval() == 9);
+  }
 }
