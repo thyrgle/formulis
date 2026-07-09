@@ -15,30 +15,66 @@ struct overloaded : Ts...
 template<class... Ts>
 overloaded(Ts...) -> overloaded<Ts...>;
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations arithmetic binary operations.
+ */
 #define BEFRIEND_BIN(name, t1, t2) \
   template<typename U> \
   friend auto operator name(t1& lhs, t2& rhs)->formula<U>&;
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for boolean binary operations.
+ */
 #define BEFRIEND_BIN_BOOL(name, t1, t2) \
   template<typename U> \
   friend auto operator name(t1& lhs, t2& rhs)->formula<bool>&;
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for arithmetic unary operations.
+ */
 #define BEFRIEND_UNARY(name, t1) \
   template<typename U> \
   friend auto operator~(t1& rhs)->formula<U>&;
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for boolean unary operations.
+ */
 #define BEFRIEND_UNARY_BOOL(name, t1) \
   template<typename U> \
   friend auto operator~(t1& rhs)->formula<bool>&;
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for unary arithmetic operators in the term class.
+ */
 #define TERM_BEFRIEND_UNARY_OP(op) BEFRIEND_UNARY(op, term<U>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for unary boolean operators in the term class.
+ */
 #define TERM_BEFRIEND_UNARY_OP_BOOL(op) BEFRIEND_UNARY_BOOL(op, term<U>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for unary arithmetic operators in the formula class.
+ */
 #define FORMULA_BEFRIEND_UNARY_OP(op) BEFRIEND_UNARY(op, formula<U>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for unary boolean operators in the formula class.
+ */
 #define FORMULA_BEFRIEND_UNARY_OP_BOOL(op) BEFRIEND_UNARY_BOOL(op, formula<U>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for binary arithmetic operators in the term class.
+ */
 #define TERM_BEFRIEND_BIN_OP(op) \
   BEFRIEND_BIN(op, U, term<U>) \
   BEFRIEND_BIN(op, term<U>, U) \
@@ -46,6 +82,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND_BIN(op, term<U>, formula<U>) \
   BEFRIEND_BIN(op, formula<U>, term<U>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for binary boolean operators in the term class.
+ */
 #define TERM_BEFRIEND_BIN_OP_BOOL(op) \
   BEFRIEND_BIN_BOOL(op, U, term<U>) \
   BEFRIEND_BIN_BOOL(op, term<U>, U) \
@@ -53,6 +93,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND_BIN_BOOL(op, term<U>, formula<U>) \
   BEFRIEND_BIN_BOOL(op, formula<U>, term<U>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for binary arithmetic operators in the formula class.
+ */
 #define FORMULA_BEFRIEND_BIN_OP(op) \
   BEFRIEND_BIN(op, U, formula<U>) \
   BEFRIEND_BIN(op, formula<U>, U) \
@@ -60,6 +104,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND_BIN(op, formula<U>, term<U>) \
   BEFRIEND_BIN(op, formula<U>, formula<U>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * friend declarations for binary boolean operators in the formula class.
+ */
 #define FORMULA_BEFRIEND_BIN_OP_BOOL(op) \
   BEFRIEND_BIN_BOOL(op, U, formula<U>) \
   BEFRIEND_BIN_BOOL(op, formula<U>, U) \
@@ -67,6 +115,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND_BIN_BOOL(op, formula<U>, term<U>) \
   BEFRIEND_BIN_BOOL(op, formula<U>, formula<U>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * operator overloading when the lhs is a numeric. As in `auto z = 1 + x`.
+ */
 #define REGISTER_OVERLOAD_VAL_LEFT(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->formula<T>& \
@@ -80,6 +132,11 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *form; \
   }
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * operator overloading when the lhs is a numeric/bool. As in `auto z = true ||
+ * x`.
+ */
 #define REGISTER_OVERLOAD_VAL_LEFT_BOOL(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->formula<bool>& \
@@ -93,6 +150,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *form; \
   }
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * operator overloading when the rhs is a numeric. As in `auto z = x + 1`.
+ */
 #define REGISTER_OVERLOAD_VAL_RIGHT(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->formula<T>& \
@@ -106,6 +167,11 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *form; \
   }
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates
+ * operator overloading when the rhs is a numeric/bool. As in `auto z = x ||
+ * true`.
+ */
 #define REGISTER_OVERLOAD_VAL_RIGHT_BOOL(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->formula<bool>& \
@@ -119,6 +185,11 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *form; \
   }
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates a
+ * particular arithmetic binary operator overload given the operator and two
+ * types.
+ */
 #define REGISTER_BIN_OVERLOAD(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->formula<T>& \
@@ -132,6 +203,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *form; \
   }
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates a
+ * particular boolean binary operator overload given the operator and two types.
+ */
 #define REGISTER_BIN_OVERLOAD_BOOL(name, t1, t2) \
   template<typename T> \
   auto operator name(t1& lhs, t2& rhs)->formula<bool>& \
@@ -145,6 +220,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *form; \
   }
 
+/**
+ * Helper macro to gnerate operator overloads. In particular, generates every
+ * operator overload for a particular binary arithmetic operator.
+ */
 #define REGISTER_BIN_OP(op) \
   REGISTER_OVERLOAD_VAL_LEFT(op, T, term<T>) \
   REGISTER_BIN_OVERLOAD(op, term<T>, term<T>) \
@@ -154,6 +233,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
   REGISTER_BIN_OVERLOAD(op, formula<T>, T) \
   REGISTER_BIN_OVERLOAD(op, formula<T>, formula<T>)
 
+/**
+ * Helper macro to gnerate operator overloads. In particular, generates every
+ * operator overload for a particular binary boolean operator.
+ */
 #define REGISTER_BIN_OP_BOOL(op) \
   REGISTER_OVERLOAD_VAL_LEFT_BOOL(op, T, term<T>) \
   REGISTER_BIN_OVERLOAD_BOOL(op, term<T>, term<T>) \
@@ -163,6 +246,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
   REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, T) \
   REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, formula<T>)
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates a
+ * particular arithmetic unary operator overload given the operator and a type.
+ */
 #define REGISTER_UNARY_OVERLOAD(name, t1) \
   template<typename T> \
   auto operator name(t1& rhs)->formula<T>& \
@@ -174,6 +261,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *form; \
   }
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates a
+ * particular boolean unary operator overload given the operator and a type.
+ */
 #define REGISTER_UNARY_OVERLOAD_BOOL(name, t1) \
   template<typename T> \
   auto operator name(t1& rhs)->formula<bool>& \
@@ -185,10 +276,18 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *form; \
   }
 
+/**
+ * Helper macro to gnerate operator overloads. In particular, generates every
+ * operator overload for a particular unary arithmetic operator.
+ */
 #define REGISTER_UNARY_OP(op) \
   REGISTER_UNARY_OVERLOAD(op, term<T>) \
   REGISTER_UNARY_OVERLOAD(op, formula<T>)
 
+/**
+ * Helper macro to gnerate operator overloads. In particular, generates every
+ * operator overload for a particular unary boolean operator.
+ */
 #define REGISTER_UNARY_OP_BOOL(op) \
   REGISTER_UNARY_OVERLOAD_BOOL(op, term<T>) \
   REGISTER_UNARY_OVERLOAD_BOOL(op, formula<T>)
