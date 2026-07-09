@@ -603,87 +603,16 @@ public:
   FORMULA_BEFRIEND_UNARY_OP_BOOL(!)
 };
 
-/**
- * @fn formula_like operator+(formula_like, formula_like)
- * @brief Various operator+ overloads for addition for terms, and formulas.
- * @return A new formula equivalent to lhs + rhs.
- */
 REGISTER_BIN_OP(+)
-
-/**
- * @fn formula_like operator-(formula_like, formula_like)
- * @brief Various operator- overloads for subtraction for terms, and formulas.
- * @return A new formula equivalent to lhs - rhs.
- */
 REGISTER_BIN_OP(-)
-
-/**
- * @fn formula_like operator*(formula_like, formula_like)
- * @brief Various operator* overloads for multiplication for terms, and
- * formulas.
- * @return A new formula equivalent to lhs * rhs.
- */
 REGISTER_BIN_OP(*)
-
-/**
- * @fn formula_like operator/(formula_like, formula_like)
- * @brief Various operator/ overloads for division for terms, and formulas.
- * @return A new formula equivalent to lhs / rhs.
- */
 REGISTER_BIN_OP(/)
-
-/**
- * @fn formula_like operator%(formula_like, formula_like)
- * @brief Various operator% overloads for modulo for terms, and formulas.
- * @return A new formula equivalent to lhs % rhs.
- */
 REGISTER_BIN_OP(%)
-
-/**
- * @fn formula_like operator^(formula_like, formula_like)
- * @brief Various operator^ overloads for bitwise xor for terms, and formulas.
- * @return A new formula equivalent to lhs ^ rhs.
- */
 REGISTER_BIN_OP(^)
-
-/**
- * @fn formula_like operator&(formula_like, formula_like)
- * @brief Various operator& overloads for bitwise and for terms, and formulas.
- * @return A new formula equivalent to lhs & rhs.
- */
 REGISTER_BIN_OP(&)
-
-/**
- * @fn formula_like operator|formula_like, formula_like)
- * @brief Various operator& overloads for bitwise or for terms, and formulas.
- * @return A new formula equivalent to lhs | rhs.
- */
 REGISTER_BIN_OP(|)
-
-/**
- * @fn formula_like operator&&(formula_like, formula_like)
- * @brief Various operator&& overloads for logical and for terms, and formulas.
- * @return A new formula equivalent to lhs && rhs.
- */
 REGISTER_BIN_OP_BOOL(&&)
-
-/**
- * @fn formula_like operator||(formula_like, formula_like)
- * @brief Various operator|| overloads for logical or for terms, and formulas.
- * @return A new formula equivalent to lhs || rhs.
- */
 REGISTER_BIN_OP_BOOL(||)
 
-/**
- * @fn formula_like operator~(formula_like, formula_like)
- * @brief Various operator~ overloads for bitwise not for terms, and formulas.
- * @return A new formula equivalent to ~rhs.
- */
 REGISTER_UNARY_OP_BOOL(~)
-
-/**
- * @fn formula_like operator!(formula_like, formula_like)
- * @brief Various operator! overloads for logical not for terms, and formulas.
- * @return A new formula equivalent to !rhs.
- */
 REGISTER_UNARY_OP_BOOL(!)
