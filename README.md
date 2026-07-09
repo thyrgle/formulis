@@ -4,7 +4,7 @@
 
 ## What is it?
 
-`formulis` allows you to make event listeners using formulae. What does that mean? First, consider this small example:
+`formulis` is a radically simple reactive programming library that allows you to make event listeners using formulae. What does that mean? First, consider this small example:
 
 ```cpp
 #include <memory>
