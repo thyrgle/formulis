@@ -30,14 +30,11 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 #define TERM_BEFRIEND_UNARY_OP(op) BEFRIEND_UNARY(op, term<U>)
 
-#define TERM_BEFRIEND_UNARY_OP_BOOL(op) \
-  BEFRIEND_UNARY_BOOL(op, term<U>)
+#define TERM_BEFRIEND_UNARY_OP_BOOL(op) BEFRIEND_UNARY_BOOL(op, term<U>)
 
-#define FORMULA_BEFRIEND_UNARY_OP(op) \
-  BEFRIEND_UNARY(op, formula<U>)
+#define FORMULA_BEFRIEND_UNARY_OP(op) BEFRIEND_UNARY(op, formula<U>)
 
-#define FORMULA_BEFRIEND_UNARY_OP_BOOL(op) \
-  BEFRIEND_UNARY_BOOL(op, formula<U>)
+#define FORMULA_BEFRIEND_UNARY_OP_BOOL(op) BEFRIEND_UNARY_BOOL(op, formula<U>)
 
 #define TERM_BEFRIEND_BIN_OP(op) \
   BEFRIEND_BIN(op, U, term<U>) \
@@ -65,8 +62,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
   BEFRIEND_BIN_BOOL(op, formula<U>, U) \
   BEFRIEND_BIN_BOOL(op, term<U>, formula<U>) \
   BEFRIEND_BIN_BOOL(op, formula<U>, term<U>) \
-  BEFRIEND_BIN_BOOL( \
-      op, formula<U>, formula<U>)
+  BEFRIEND_BIN_BOOL(op, formula<U>, formula<U>)
 
 #define REGISTER_OVERLOAD_VAL_LEFT(name, t1, t2) \
   template<typename T> \
@@ -75,7 +71,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
     auto comb = [](const auto& lhss, const auto& rhss) -> T \
     { return lhss name rhss; }; \
     const bin_expr<T> new_expr = {&new term<T>(lhs), &rhs, comb}; \
-    formula<T> *form = new formula<T>(new_expr); \
+    formula<T>* form = new formula<T>(new_expr); \
     lhs.m_parents.push_back(form); \
     rhs.m_parents.push_back(form); \
     return *form; \
@@ -114,7 +110,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
     auto comb = [](const auto& lhss, const auto& rhss) -> bool \
     { return lhss name rhss; }; \
     const bin_expr<T> new_expr = {&lhs, &term<T>(rhs), comb}; \
-    formula<T> *form = new formula<T>(new_expr); \
+    formula<T>* form = new formula<T>(new_expr); \
     lhs.m_parents.push_back(form); \
     rhs.m_parents.push_back(form); \
     return *form; \
@@ -127,7 +123,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
     auto comb = [](const auto& lhss, const auto& rhss) -> T \
     { return lhss name rhss; }; \
     const bin_expr<T> new_expr = {&lhs, &rhs, comb}; \
-    formula<T> *form = new formula<T>(new_expr); \
+    formula<T>* form = new formula<T>(new_expr); \
     lhs.m_parents.push_back(form); \
     rhs.m_parents.push_back(form); \
     return *form; \
@@ -140,7 +136,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
     auto comb = [](const auto& lhss, const auto& rhss) -> bool \
     { return lhss name rhss; }; \
     const bin_expr<T> new_expr = {&lhs, &rhs, comb}; \
-    formula<T> *form = formula<T>(new_expr); \
+    formula<T>* form = formula<T>(new_expr); \
     lhs.m_parents.push_back(form); \
     rhs.m_parents.push_back(form); \
     return *form; \
@@ -148,29 +144,21 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 #define REGISTER_BIN_OP(op) \
   REGISTER_OVERLOAD_VAL_LEFT(op, T, term<T>) \
-  REGISTER_BIN_OVERLOAD( \
-      op, term<T>, term<T>) \
-  REGISTER_BIN_OVERLOAD( \
-      op, term<T>, formula<T>) \
-  REGISTER_BIN_OVERLOAD( \
-      op, formula<T>, term<T>) \
+  REGISTER_BIN_OVERLOAD(op, term<T>, term<T>) \
+  REGISTER_BIN_OVERLOAD(op, term<T>, formula<T>) \
+  REGISTER_BIN_OVERLOAD(op, formula<T>, term<T>) \
   REGISTER_OVERLOAD_VAL_RIGHT(op, T, formula<T>) \
   REGISTER_BIN_OVERLOAD(op, formula<T>, T) \
-  REGISTER_BIN_OVERLOAD( \
-      op, formula<T>, formula<T>)
+  REGISTER_BIN_OVERLOAD(op, formula<T>, formula<T>)
 
 #define REGISTER_BIN_OP_BOOL(op) \
   REGISTER_OVERLOAD_VAL_LEFT_BOOL(op, T, term<T>) \
-  REGISTER_BIN_OVERLOAD_BOOL( \
-      op, term<T>, term<T>) \
-  REGISTER_BIN_OVERLOAD_BOOL( \
-      op, term<T>, formula<T>) \
-  REGISTER_BIN_OVERLOAD_BOOL( \
-      op, formula<T>, term<T>) \
+  REGISTER_BIN_OVERLOAD_BOOL(op, term<T>, term<T>) \
+  REGISTER_BIN_OVERLOAD_BOOL(op, term<T>, formula<T>) \
+  REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, term<T>) \
   REGISTER_OVERLOAD_VAL_RIGHT_BOOL(op, T, formula<T>) \
   REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, T) \
-  REGISTER_BIN_OVERLOAD_BOOL( \
-      op, formula<T>, formula<T>)
+  REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, formula<T>)
 
 #define REGISTER_UNARY_OVERLOAD(name, t1) \
   template<typename T> \
@@ -178,7 +166,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
   { \
     auto comb = [](const auto& rhss) -> T { return name rhss; }; \
     const unary_expr<T> new_expr = {&rhs, comb}; \
-    formula<T> *form = new formula<T>(new_expr); \
+    formula<T>* form = new formula<T>(new_expr); \
     rhs.m_parents.push_back(form); \
     return *form; \
   }
@@ -189,7 +177,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
   { \
     auto comb = [](const auto& rhss) -> bool { return name rhss; }; \
     const unary_expr<T> new_expr = {&rhs, comb}; \
-    formula<T> *form = new formula<T>(new_expr); \
+    formula<T>* form = new formula<T>(new_expr); \
     rhs->m_parents.push_back(form); \
     return *form; \
   }
@@ -326,8 +314,7 @@ public:
  * make this distinction.)
  */
 template<typename T>
-using stmt =
-    std::variant<term<T>*, formula<T>*>;
+using stmt = std::variant<term<T>*, formula<T>*>;
 
 /**
  * Keep track of a unary operation applied to some inner formula (the "rhs").
@@ -406,36 +393,32 @@ public:
       return m_cached_val;
     }
     return std::visit(
-        overloaded {[](unary_expr<T> expression) -> T
-                    {
-                      auto inner = std::visit(
-                          overloaded {[](term<T>* val) -> T
-                                      { return val->unwrap(); },
-                                      [](formula<T>* ast) -> T
-                                      {
-                                        return (ast->m_needs_update
-                                                    ? ast->eval()
-                                                    : ast->m_cached_val);
-                                      }},
-                          expression.rhs);
-                      return expression.op(inner);
-                    },
-                    [](bin_expr<T> operand) -> T
-                    {
-                      auto inner_lhs = std::visit(
-                          overloaded {[](term<T>* val) -> T
-                                      { return val->unwrap(); },
-                                      [](formula<T>* ast) -> T
-                                      { return ast->eval(); }},
-                          operand.lhs);
-                      auto inner_rhs = std::visit(
-                          overloaded {[](term<T>* val) -> T
-                                      { return val->unwrap(); },
-                                      [](formula<T>* ast) -> T
-                                      { return ast->eval(); }},
-                          operand.rhs);
-                      return operand.op(inner_lhs, inner_rhs);
-                    }},
+        overloaded {
+            [](unary_expr<T> expression) -> T
+            {
+              auto inner = std::visit(
+                  overloaded {[](term<T>* val) -> T { return val->unwrap(); },
+                              [](formula<T>* ast) -> T
+                              {
+                                return (ast->m_needs_update
+                                            ? ast->eval()
+                                            : ast->m_cached_val);
+                              }},
+                  expression.rhs);
+              return expression.op(inner);
+            },
+            [](bin_expr<T> operand) -> T
+            {
+              auto inner_lhs = std::visit(
+                  overloaded {[](term<T>* val) -> T { return val->unwrap(); },
+                              [](formula<T>* ast) -> T { return ast->eval(); }},
+                  operand.lhs);
+              auto inner_rhs = std::visit(
+                  overloaded {[](term<T>* val) -> T { return val->unwrap(); },
+                              [](formula<T>* ast) -> T { return ast->eval(); }},
+                  operand.rhs);
+              return operand.op(inner_lhs, inner_rhs);
+            }},
         m_expr);
   }
 
