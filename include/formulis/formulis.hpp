@@ -3,7 +3,9 @@
 #include <variant>
 #include <vector>
 
-// Helper to combine multiple lambdas, used for "pattern matching."
+/*
+ * Helper to combine multiple lambdas, used for "pattern matching."
+ */
 template<class... Ts>
 struct overloaded : Ts...
 {
