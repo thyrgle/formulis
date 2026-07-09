@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <functional>
 #include <variant>
 #include <vector>
@@ -235,6 +236,19 @@ public:
   {
   }
 
+  template<typename U>
+  auto remove_parent(formula<U>* parent) -> void
+  {
+    m_parents.erase(std::remove(m_parents.begin(), m_parents.end(), parent));
+  }
+
+  ~term()
+  {
+    for (auto* parent : m_parents) {
+      parent->~formula();
+    }
+  }
+
   /**
    * Get the current value of the term. (For `formula` use `eval`).
    */
@@ -358,6 +372,7 @@ class formula
   std::variant<unary_expr<T>, bin_expr<T>> m_expr;
   T m_cached_val;
   std::vector<formula<T>*> m_parents;
+  std::vector<stmt<T>> m_children;
   std::vector<std::function<void(T, T)>> m_on_change;
 
 public:
@@ -368,6 +383,7 @@ public:
       , m_parents({})
       , m_on_change({})
   {
+    m_children.push_back(expr.rhs);
   }
 
   explicit formula(bin_expr<T> expr)
@@ -377,6 +393,29 @@ public:
       , m_parents({})
       , m_on_change({})
   {
+    m_children.push_back(expr.lhs);
+    m_children.push_back(expr.rhs);
+  }
+
+  template<typename U>
+  auto remove_parent(formula<U>* parent) -> void
+  {
+    m_parents.erase(std::remove(m_parents.begin(), m_parents.end(), parent));
+  }
+
+  ~formula()
+  {
+    // Mark parent formula for deletion.
+    for (auto* parent : m_parents) {
+      parent->~formula();
+    }
+    for (auto child : m_children) {
+      std::visit(overloaded {[this](term<T>* child) -> void
+                             { child->remove_parent(this); },
+                             [this](formula<T>* child) -> void
+                             { child->remove_parent(this); }},
+                 child);
+    }
   }
 
   /**
