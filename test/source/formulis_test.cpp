@@ -42,7 +42,7 @@ TEST_CASE("simple terms and formulas", "[simple]")
     y.set(3);
     REQUIRE(z.eval() == 9);
   }
-  
+
   SECTION("basic formula [/]")
   {
     term x(2);
@@ -98,7 +98,6 @@ TEST_CASE("3 term formulas", "[simple]")
     z.set(3);
     REQUIRE(w.eval() == 9);
   }
-
 }
 
 TEST_CASE("4 term formulas", "[simple]")
