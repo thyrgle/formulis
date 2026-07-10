@@ -9,7 +9,7 @@ static auto listen_z(int old_val, int new_val)
   std::cout << "z changed from " << old_val << " to " << new_val;
 }
 
-TEST_CASE("simple terms and formulas", "[simple]")
+TEST_CASE("simple terms", "[simple]")
 {
   SECTION("change from 2 to 3")
   {
@@ -18,7 +18,10 @@ TEST_CASE("simple terms and formulas", "[simple]")
     x.set(3);
     REQUIRE(x.unwrap() == 3);
   }
+}
 
+TEST_CASE("2 term formulas", "[simple]")
+{
   SECTION("basic formula [+]")
   {
     term x(2);
