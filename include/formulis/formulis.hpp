@@ -572,6 +572,7 @@ public:
       }
       m_needs_update = false;
       for (auto& parent : m_parents) {
+        parent->set_needs_update();
         parent->update();
       }
     }
