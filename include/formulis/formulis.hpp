@@ -77,8 +77,8 @@ overloaded(Ts...) -> overloaded<Ts...>;
  * friend declarations for binary arithmetic operators in the term class.
  */
 #define TERM_BEFRIEND_BIN_OP(op) \
-  BEFRIEND_BIN(op, U, term<U>) \
-  BEFRIEND_BIN(op, term<U>, U) \
+  BEFRIEND_BIN(op, const U, term<U>) \
+  BEFRIEND_BIN(op, term<U>, const U) \
   BEFRIEND_BIN(op, term<U>, term<U>) \
   BEFRIEND_BIN(op, term<U>, formula<U>) \
   BEFRIEND_BIN(op, formula<U>, term<U>)
@@ -88,8 +88,8 @@ overloaded(Ts...) -> overloaded<Ts...>;
  * friend declarations for binary boolean operators in the term class.
  */
 #define TERM_BEFRIEND_BIN_OP_BOOL(op) \
-  BEFRIEND_BIN_BOOL(op, U, term<U>) \
-  BEFRIEND_BIN_BOOL(op, term<U>, U) \
+  BEFRIEND_BIN_BOOL(op, const U, term<U>) \
+  BEFRIEND_BIN_BOOL(op, term<U>, const U) \
   BEFRIEND_BIN_BOOL(op, term<U>, term<U>) \
   BEFRIEND_BIN_BOOL(op, term<U>, formula<U>) \
   BEFRIEND_BIN_BOOL(op, formula<U>, term<U>)
@@ -99,8 +99,8 @@ overloaded(Ts...) -> overloaded<Ts...>;
  * friend declarations for binary arithmetic operators in the formula class.
  */
 #define FORMULA_BEFRIEND_BIN_OP(op) \
-  BEFRIEND_BIN(op, U, formula<U>) \
-  BEFRIEND_BIN(op, formula<U>, U) \
+  BEFRIEND_BIN(op, const U, formula<U>) \
+  BEFRIEND_BIN(op, formula<U>, const U) \
   BEFRIEND_BIN(op, term<U>, formula<U>) \
   BEFRIEND_BIN(op, formula<U>, term<U>) \
   BEFRIEND_BIN(op, formula<U>, formula<U>)
@@ -110,8 +110,8 @@ overloaded(Ts...) -> overloaded<Ts...>;
  * friend declarations for binary boolean operators in the formula class.
  */
 #define FORMULA_BEFRIEND_BIN_OP_BOOL(op) \
-  BEFRIEND_BIN_BOOL(op, U, formula<U>) \
-  BEFRIEND_BIN_BOOL(op, formula<U>, U) \
+  BEFRIEND_BIN_BOOL(op, const U, formula<U>) \
+  BEFRIEND_BIN_BOOL(op, formula<U>, const U) \
   BEFRIEND_BIN_BOOL(op, term<U>, formula<U>) \
   BEFRIEND_BIN_BOOL(op, formula<U>, term<U>) \
   BEFRIEND_BIN_BOOL(op, formula<U>, formula<U>)
@@ -126,9 +126,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
   { \
     auto comb = [](const auto& lhss, const auto& rhss) -> T \
     { return lhss name rhss; }; \
-    const bin_expr<T> new_expr = {&new term<T>(lhs), &rhs, comb}; \
+    term<T>* new_term = new term<T>(lhs); \
+    const bin_expr<T> new_expr = {new_term, &rhs, comb}; \
     formula<T>* form = new formula<T>(new_expr); \
-    lhs.m_parents.push_back(form); \
+    new_term->m_parents.push_back(form); \
     rhs.m_parents.push_back(form); \
     return *form; \
   }
@@ -144,9 +145,10 @@ overloaded(Ts...) -> overloaded<Ts...>;
   { \
     auto comb = [](const auto& lhss, const auto& rhss) -> bool \
     { return lhss name rhss; }; \
-    const bin_expr<T> new_expr = {&new term<T>(lhs), &rhs, comb}; \
+    term<T>* new_term = new term<T>(lhs); \
+    const bin_expr<T> new_expr = {new_term, &rhs, comb}; \
     formula<T>* form = new formula<T>(new_expr); \
-    lhs.m_parents.push_back(form); \
+    new_term->m_parents.push_back(form); \
     rhs.m_parents.push_back(form); \
     return *form; \
   }
@@ -161,10 +163,11 @@ overloaded(Ts...) -> overloaded<Ts...>;
   { \
     auto comb = [](const auto& lhss, const auto& rhss) -> T \
     { return lhss name rhss; }; \
-    const bin_expr<T> new_expr = {&lhs, &new term<T>(rhs), comb}; \
-    formula<T> form = formula<T>(new_expr); \
+    term<T>* new_term = new term<T>(rhs); \
+    const bin_expr<T> new_expr = {&lhs, new_term, comb}; \
+    formula<T> *form = new formula<T>(new_expr); \
     lhs.m_parents.push_back(form); \
-    rhs.m_parents.push_back(form); \
+    new_term->m_parents.push_back(form); \
     return *form; \
   }
 
@@ -179,10 +182,11 @@ overloaded(Ts...) -> overloaded<Ts...>;
   { \
     auto comb = [](const auto& lhss, const auto& rhss) -> bool \
     { return lhss name rhss; }; \
-    const bin_expr<T> new_expr = {&lhs, &term<T>(rhs), comb}; \
+    term<T>* new_term = new term<T>(rhs); \
+    const bin_expr<T> new_expr = {&lhs, new_term, comb}; \
     formula<T>* form = new formula<T>(new_expr); \
     lhs.m_parents.push_back(form); \
-    rhs.m_parents.push_back(form); \
+    new_term->m_parents.push_back(form); \
     return *form; \
   }
 
@@ -226,26 +230,31 @@ overloaded(Ts...) -> overloaded<Ts...>;
  * operator overload for a particular binary arithmetic operator.
  */
 #define REGISTER_BIN_OP(op) \
-  REGISTER_OVERLOAD_VAL_LEFT(op, T, term<T>) \
-  REGISTER_BIN_OVERLOAD(op, term<T>, term<T>) \
   REGISTER_BIN_OVERLOAD(op, term<T>, formula<T>) \
   REGISTER_BIN_OVERLOAD(op, formula<T>, term<T>) \
-  REGISTER_OVERLOAD_VAL_RIGHT(op, T, formula<T>) \
-  REGISTER_BIN_OVERLOAD(op, formula<T>, T) \
-  REGISTER_BIN_OVERLOAD(op, formula<T>, formula<T>)
+  REGISTER_BIN_OVERLOAD(op, formula<T>, formula<T>) \
+  REGISTER_OVERLOAD_VAL_LEFT(op, const T, formula<T>) \
+  REGISTER_OVERLOAD_VAL_RIGHT(op, formula<T>, const T) \
+  REGISTER_OVERLOAD_VAL_LEFT(op, const T, term<T>) \
+  REGISTER_OVERLOAD_VAL_RIGHT(op, term<T>, const T) \
+  REGISTER_BIN_OVERLOAD(op, term<T>, term<T>)
+
+
 
 /**
  * Helper macro to gnerate operator overloads. In particular, generates every
  * operator overload for a particular binary boolean operator.
  */
 #define REGISTER_BIN_OP_BOOL(op) \
-  REGISTER_OVERLOAD_VAL_LEFT_BOOL(op, T, term<T>) \
-  REGISTER_BIN_OVERLOAD_BOOL(op, term<T>, term<T>) \
   REGISTER_BIN_OVERLOAD_BOOL(op, term<T>, formula<T>) \
   REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, term<T>) \
-  REGISTER_OVERLOAD_VAL_RIGHT_BOOL(op, T, formula<T>) \
-  REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, T) \
-  REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, formula<T>)
+  REGISTER_BIN_OVERLOAD_BOOL(op, formula<T>, formula<T>) \
+  REGISTER_OVERLOAD_VAL_LEFT_BOOL(op, const T, formula<T>) \
+  REGISTER_OVERLOAD_VAL_RIGHT_BOOL(op, formula<T>, const T) \
+  REGISTER_OVERLOAD_VAL_LEFT_BOOL(op, const T, term<T>) \
+  REGISTER_OVERLOAD_VAL_RIGHT_BOOL(op, term<T>, const T) \
+  REGISTER_BIN_OVERLOAD_BOOL(op, term<T>, term<T>)
+
 
 /**
  * Helper macro to generate operator overloads. In particular, this creates a
