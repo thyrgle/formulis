@@ -6,7 +6,6 @@
 
 ```cpp
 #include <iostream>
-#include <memory>
 #include "formulis/formulis.hpp"
 
 auto main() -> int
@@ -24,7 +23,6 @@ Formulae update to reflect changes in their terms. Furthermore, we can listen fo
 
 ```cpp
 #include <iostream>
-#include <memory>
 #include "formulis/formulis.hpp"
 
 auto listen_to_z(int old_val, int new_val) -> void
