@@ -41,6 +41,10 @@ TEST_CASE("2 term formulas", "[simple]")
     REQUIRE(z.eval() == 3);
     x.set(3);
     REQUIRE(z.eval() == 4);
+    auto w = 1 + x;
+    REQUIRE(w.eval() == 4);
+    x.set(4);
+    REQUIRE(w.eval() == 5);
   }
 
   SECTION("basic formula [*]")
