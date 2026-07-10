@@ -300,28 +300,27 @@ overloaded(Ts...) -> overloaded<Ts...>;
   REGISTER_UNARY_OVERLOAD_BOOL(op, formula<T>)
 
 #define REGISTER_INPLACE(name) \
-  auto operator name(const term<T>& other) -> term<T>& \
+  auto operator name(const term<T>& other)->term<T>& \
   { \
     T val = this->unwrap(); \
     val name other.unwrap(); \
     this->set(val); \
     return *this; \
   } \
-  auto operator name(const formula<T>& other) -> term<T>& \
+  auto operator name(const formula<T>& other)->term<T>& \
   { \
     T val = this->unwrap(); \
     val name other.eval(); \
     this->set(val); \
     return *this; \
   } \
-  auto operator name(const T& other) -> term<T>& \
+  auto operator name(const T& other)->term<T>& \
   { \
     T val = this->unwrap(); \
     val name other.eval(); \
     this->set(val); \
     return *this; \
   }
-
 
 template<typename T>
 struct unary_expr;
