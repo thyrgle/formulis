@@ -38,6 +38,20 @@ TEST_CASE("simple terms", "[simple]")
     REQUIRE(y == 3);
     REQUIRE(x.unwrap() == 2);
   }
+  SECTION("+= test")
+  {
+    term x(2);
+    REQUIRE(x.unwrap() == 2);
+    x += 2;
+    REQUIRE(x.unwrap() == 4);
+  }
+  SECTION("-= test")
+  {
+    term x(4);
+    REQUIRE(x.unwrap() == 4);
+    x -= 2;
+    REQUIRE(x.unwrap() == 2);
+  }
 }
 
 TEST_CASE("2 term formulas", "[simple]")

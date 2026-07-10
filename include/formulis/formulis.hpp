@@ -317,7 +317,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
   auto operator name(const T& other)->term<T>& \
   { \
     T val = this->unwrap(); \
-    val name other.eval(); \
+    val name other; \
     this->set(val); \
     return *this; \
   }
