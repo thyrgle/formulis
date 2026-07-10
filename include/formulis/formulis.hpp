@@ -496,7 +496,7 @@ public:
   auto operator--(int)
   {
     T return_value = this->unwrap();
-    ++(*this);
+    --(*this);
     return return_value;
   }
 };

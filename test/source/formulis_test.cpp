@@ -18,6 +18,26 @@ TEST_CASE("simple terms", "[simple]")
     x.set(3);
     REQUIRE(x.unwrap() == 3);
   }
+  SECTION("increment test")
+  {
+    term x(2);
+    REQUIRE(x.unwrap() == 2);
+    ++x;
+    REQUIRE(x.unwrap() == 3);
+    int y = x++;
+    REQUIRE(y == 3);
+    REQUIRE(x.unwrap() == 4);
+  }
+  SECTION("decrement test")
+  {
+    term x(4);
+    REQUIRE(x.unwrap() == 4);
+    --x;
+    REQUIRE(x.unwrap() == 3);
+    int y = x--;
+    REQUIRE(y == 3);
+    REQUIRE(x.unwrap() == 2);
+  }
 }
 
 TEST_CASE("2 term formulas", "[simple]")
