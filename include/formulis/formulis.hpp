@@ -165,7 +165,7 @@ overloaded(Ts...) -> overloaded<Ts...>;
     { return lhss name rhss; }; \
     term<T>* new_term = new term<T>(rhs); \
     const bin_expr<T> new_expr = {&lhs, new_term, comb}; \
-    formula<T> *form = new formula<T>(new_expr); \
+    formula<T>* form = new formula<T>(new_expr); \
     lhs.m_parents.push_back(form); \
     new_term->m_parents.push_back(form); \
     return *form; \
@@ -239,8 +239,6 @@ overloaded(Ts...) -> overloaded<Ts...>;
   REGISTER_OVERLOAD_VAL_RIGHT(op, term<T>, const T) \
   REGISTER_BIN_OVERLOAD(op, term<T>, term<T>)
 
-
-
 /**
  * Helper macro to gnerate operator overloads. In particular, generates every
  * operator overload for a particular binary boolean operator.
@@ -254,7 +252,6 @@ overloaded(Ts...) -> overloaded<Ts...>;
   REGISTER_OVERLOAD_VAL_LEFT_BOOL(op, const T, term<T>) \
   REGISTER_OVERLOAD_VAL_RIGHT_BOOL(op, term<T>, const T) \
   REGISTER_BIN_OVERLOAD_BOOL(op, term<T>, term<T>)
-
 
 /**
  * Helper macro to generate operator overloads. In particular, this creates a

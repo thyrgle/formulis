@@ -43,7 +43,6 @@ TEST_CASE("2 term formulas", "[simple]")
     REQUIRE(z.eval() == 4);
   }
 
-
   SECTION("basic formula [*]")
   {
     term x(2);
