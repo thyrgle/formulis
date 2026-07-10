@@ -455,6 +455,50 @@ public:
   REGISTER_INPLACE(^=)
   REGISTER_INPLACE(&=)
   REGISTER_INPLACE(|=)
+
+  /**
+   * Overload increment. Note: Returns the previous value of type `T` not
+   * `term<T>`.
+   */
+  auto operator++()
+  {
+    T new_value = this->unwrap() + 1;
+    this->set(new_value);
+    return *this;
+  }
+
+  /**
+   * Overload decrement. Note: Returns the previous value of type `T` not
+   * `term<T>`.
+   */
+  auto operator--()
+  {
+    T new_value = this->unwrap() - 1;
+    this->set(new_value);
+    return *this;
+  }
+
+  /**
+   * Overload increment. Note: Returns the previous value of type `T` not
+   * `term<T>`.
+   */
+  auto operator++(int)
+  {
+    T return_value = this->unwrap();
+    ++(*this);
+    return return_value;
+  }
+
+  /**
+   * Overload decrement. Note: Returns the previous value of type `T` not
+   * `term<T>`.
+   */
+  auto operator--(int)
+  {
+    T return_value = this->unwrap();
+    ++(*this);
+    return return_value;
+  }
 };
 
 /**
