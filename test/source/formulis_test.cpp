@@ -1,13 +1,12 @@
-#include <iostream>
-
 #include "formulis/formulis.hpp"
 
 #include <catch2/catch_test_macros.hpp>
 
-static auto listen_z(int old_val, int new_val)
+auto my_func(const int& x) -> int
 {
-  std::cout << "z changed from " << old_val << " to " << new_val;
+  return 3 * x + 1;
 }
+REGISTER_UNARY_PROC(my_func, int)
 
 TEST_CASE("simple terms", "[simple]")
 {
@@ -185,5 +184,17 @@ TEST_CASE("4 term formulas", "[simple]")
     REQUIRE(o.eval() == 11);
     w.set(3);
     REQUIRE(o.eval() == 12);
+  }
+}
+
+TEST_CASE("custom operator", "[simple]")
+{
+  SECTION("test creation of custom unary op")
+  {
+    term x(3);
+    auto z = my_func(x);
+    REQUIRE(z.eval() == 10);
+    x.set(4);
+    REQUIRE(z.eval() == 13);
   }
 }

@@ -18,106 +18,6 @@ overloaded(Ts...) -> overloaded<Ts...>;
 
 /**
  * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations arithmetic binary operations.
- */
-#define BEFRIEND_BIN(name, t1, t2) \
-  template<typename U> \
-  friend auto operator name(t1& lhs, t2& rhs)->formula<U>&;
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for boolean binary operations.
- */
-#define BEFRIEND_BIN_BOOL(name, t1, t2) \
-  template<typename U> \
-  friend auto operator name(t1& lhs, t2& rhs)->formula<bool>&;
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for arithmetic unary operations.
- */
-#define BEFRIEND_UNARY(name, t1) \
-  template<typename U> \
-  friend auto operator~(t1& rhs)->formula<U>&;
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for boolean unary operations.
- */
-#define BEFRIEND_UNARY_BOOL(name, t1) \
-  template<typename U> \
-  friend auto operator~(t1& rhs)->formula<bool>&;
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for unary arithmetic operators in the term class.
- */
-#define TERM_BEFRIEND_UNARY_OP(op) BEFRIEND_UNARY(op, term<U>)
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for unary boolean operators in the term class.
- */
-#define TERM_BEFRIEND_UNARY_OP_BOOL(op) BEFRIEND_UNARY_BOOL(op, term<U>)
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for unary arithmetic operators in the formula class.
- */
-#define FORMULA_BEFRIEND_UNARY_OP(op) BEFRIEND_UNARY(op, formula<U>)
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for unary boolean operators in the formula class.
- */
-#define FORMULA_BEFRIEND_UNARY_OP_BOOL(op) BEFRIEND_UNARY_BOOL(op, formula<U>)
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for binary arithmetic operators in the term class.
- */
-#define TERM_BEFRIEND_BIN_OP(op) \
-  BEFRIEND_BIN(op, const U, term<U>) \
-  BEFRIEND_BIN(op, term<U>, const U) \
-  BEFRIEND_BIN(op, term<U>, term<U>) \
-  BEFRIEND_BIN(op, term<U>, formula<U>) \
-  BEFRIEND_BIN(op, formula<U>, term<U>)
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for binary boolean operators in the term class.
- */
-#define TERM_BEFRIEND_BIN_OP_BOOL(op) \
-  BEFRIEND_BIN_BOOL(op, const U, term<U>) \
-  BEFRIEND_BIN_BOOL(op, term<U>, const U) \
-  BEFRIEND_BIN_BOOL(op, term<U>, term<U>) \
-  BEFRIEND_BIN_BOOL(op, term<U>, formula<U>) \
-  BEFRIEND_BIN_BOOL(op, formula<U>, term<U>)
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for binary arithmetic operators in the formula class.
- */
-#define FORMULA_BEFRIEND_BIN_OP(op) \
-  BEFRIEND_BIN(op, const U, formula<U>) \
-  BEFRIEND_BIN(op, formula<U>, const U) \
-  BEFRIEND_BIN(op, term<U>, formula<U>) \
-  BEFRIEND_BIN(op, formula<U>, term<U>) \
-  BEFRIEND_BIN(op, formula<U>, formula<U>)
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
- * friend declarations for binary boolean operators in the formula class.
- */
-#define FORMULA_BEFRIEND_BIN_OP_BOOL(op) \
-  BEFRIEND_BIN_BOOL(op, const U, formula<U>) \
-  BEFRIEND_BIN_BOOL(op, formula<U>, const U) \
-  BEFRIEND_BIN_BOOL(op, term<U>, formula<U>) \
-  BEFRIEND_BIN_BOOL(op, formula<U>, term<U>) \
-  BEFRIEND_BIN_BOOL(op, formula<U>, formula<U>)
-
-/**
- * Helper macro to generate operator overloads. In particular, this creates
  * operator overloading when the lhs is a numeric. As in `auto z = 1 + x`.
  */
 #define REGISTER_OVERLOAD_VAL_LEFT(name, t1, t2) \
@@ -322,6 +222,41 @@ overloaded(Ts...) -> overloaded<Ts...>;
     return *this; \
   }
 
+/**
+ * Helper macro to generate operator overloads. In particular, this creates a
+ * particular unary operator overload given the operator and a type.
+ */
+#define REGISTER_UNARY_PROC_OVERLOAD(name, t1, t2) \
+  auto name(t1& rhs) -> formula<t2>& \
+  { \
+    auto comb = [](const auto& rhss) -> t2 { return name(rhss); }; \
+    const unary_expr<t2> new_expr = {&rhs, comb}; \
+    formula<t2>* form = new formula<t2>(new_expr); \
+    rhs.m_parents.push_back(form); \
+    return *form; \
+  }
+
+/**
+ * Helper macro to generate operator overloads. In particular, this creates a
+ * particular boolean unary operator overload given the operator and a type.
+ */
+#define REGISTER_UNARY_PROC_OVERLOAD_BOOL(name, t1, t2) \
+  auto name(t1& rhs) -> formula<bool>& \
+  { \
+    auto comb = [](const auto& rhss) -> bool { return name(rhss); }; \
+    const unary_expr<t2> new_expr = {&rhs, comb}; \
+    formula<t2>* form = new formula<t2>(new_expr); \
+    rhs.m_parents.push_back(form); \
+    return *form; \
+  }
+
+/**
+ * Allow for registering functions (of one parameter).
+ */
+#define REGISTER_UNARY_PROC(name, t1) \
+  REGISTER_UNARY_PROC_OVERLOAD(name, term<t1>, t1) \
+  REGISTER_UNARY_PROC_OVERLOAD(name, formula<t1>, t1)
+
 template<typename T>
 struct unary_expr;
 
@@ -342,7 +277,6 @@ class formula;
 template<typename T>
 class term
 {
-  std::vector<formula<T>*> m_parents;
   std::vector<std::function<void(T, T)>> m_on_change;
   T m_value;
 
@@ -360,6 +294,10 @@ class term
   }
 
 public:
+  /** Do not touch directly! Needs to be public for user to use
+   * REGISTER_*_OP(...) */
+  std::vector<formula<T>*> m_parents;
+
   explicit term(T value)
       : m_parents({})
       , m_on_change({})
@@ -432,20 +370,6 @@ public:
     // Make changes now that change happened.
     change_detected(old_value);
   }
-
-  TERM_BEFRIEND_BIN_OP(+)
-  TERM_BEFRIEND_BIN_OP(-)
-  TERM_BEFRIEND_BIN_OP(*)
-  TERM_BEFRIEND_BIN_OP(/)
-  TERM_BEFRIEND_BIN_OP(%)
-  TERM_BEFRIEND_BIN_OP(^)
-  TERM_BEFRIEND_BIN_OP(&)
-  TERM_BEFRIEND_BIN_OP(|)
-  TERM_BEFRIEND_BIN_OP_BOOL(&&)
-  TERM_BEFRIEND_BIN_OP_BOOL(||)
-
-  TERM_BEFRIEND_UNARY_OP_BOOL(~)
-  TERM_BEFRIEND_UNARY_OP_BOOL(!)
 
   REGISTER_INPLACE(+=)
   REGISTER_INPLACE(-=)
@@ -550,11 +474,14 @@ class formula
   bool m_needs_update;
   std::variant<unary_expr<T>, bin_expr<T>> m_expr;
   T m_cached_val;
-  std::vector<formula<T>*> m_parents;
   std::vector<stmt<T>> m_children;
   std::vector<std::function<void(T, T)>> m_on_change;
 
 public:
+  /** Do not touch directly! Needs to be public for user to use
+   * REGISTER_*_OP(...) */
+  std::vector<formula<T>*> m_parents;
+
   explicit formula(unary_expr<T> expr)
       : m_needs_update(true)
       , m_expr(expr)
@@ -670,20 +597,6 @@ public:
   {
     m_on_change.push_back(func);
   }
-
-  FORMULA_BEFRIEND_BIN_OP(+)
-  FORMULA_BEFRIEND_BIN_OP(-)
-  FORMULA_BEFRIEND_BIN_OP(*)
-  FORMULA_BEFRIEND_BIN_OP(/)
-  FORMULA_BEFRIEND_BIN_OP(%)
-  FORMULA_BEFRIEND_BIN_OP(^)
-  FORMULA_BEFRIEND_BIN_OP(&)
-  FORMULA_BEFRIEND_BIN_OP(|)
-  FORMULA_BEFRIEND_BIN_OP_BOOL(&&)
-  FORMULA_BEFRIEND_BIN_OP_BOOL(||)
-
-  FORMULA_BEFRIEND_UNARY_OP_BOOL(~)
-  FORMULA_BEFRIEND_UNARY_OP_BOOL(!)
 };
 
 REGISTER_BIN_OP(+)
