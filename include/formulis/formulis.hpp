@@ -323,7 +323,7 @@ public:
    */
   auto unwrap() const -> T { return m_value; }
 
-  auto operator()() -> T { return this->unwrap(); }
+  operator T() const { return this->unwrap(); }
 
   /**
    * Set the value of a term to the *current* value of a formula.
@@ -569,7 +569,7 @@ public:
         m_expr);
   }
 
-  auto operator()() -> T { return this->eval(); }
+  operator T() const { return this->eval(); }
 
   /**
    * Update the cached value of the formula and also perform function calls
