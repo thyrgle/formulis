@@ -13,9 +13,9 @@ auto main() -> int
   term x(3); // Not actually an int, but a term that holds an int value.
   term y(5); // Same as above.
   auto z = x + y; // z = x + y -> 3 + 5 = 8.
-  std::cout << z.eval(); // Gets the value "8".
+  std::cout << z(); // Gets the value "8".
   x->set(4); // Change the value of the term x.
-  std::cout << z.eval(); // z = x + y -> 4 + 5 = "9" now. Everything is updated automatically.
+  std::cout << z(); // z = x + y -> 4 + 5 = "9" now. Everything is updated automatically.
 }
 ```
 

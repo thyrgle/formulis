@@ -323,6 +323,8 @@ public:
    */
   auto unwrap() const -> T { return m_value; }
 
+  auto operator()() -> T { return this->unwrap(); }
+
   /**
    * Set the value of a term to the *current* value of a formula.
    * @param form The formula to be evaluated and set this term to.
@@ -566,6 +568,8 @@ public:
             }},
         m_expr);
   }
+
+  auto operator()() -> T { return this->eval(); }
 
   /**
    * Update the cached value of the formula and also perform function calls
